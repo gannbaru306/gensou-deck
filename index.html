@@ -249,10 +249,10 @@ if(ev===0)$v(head()+`<h2>神社の賽銭箱</h2><p>お賽銭を捧げると祝�
 else $v(head()+`<h2>怪しいキノコ</h2><p>道端に見慣れないキノコが生えている。</p><div class="ch"><button onclick="mush()">食べる</button><button onclick="map()">やめておく</button></div>`)}
 function mush(){const r=R(3);if(r===0){heal(15);G.msg='元気が湧いた。HP15回復'}else if(r===1){G.hp=Math.max(1,G.hp-8);G.msg='腹を壊した。HP-8'}else{G.gold+=40;G.msg='お賽銭40を見つけた'}
 $v(head()+`<p>${G.msg}</p><button onclick="map()">進む</button>`)}
-function over(ok){if(!ok&&G.lives>0&&alive().length){G.lives--;G.hp=Math.ceil(G.mhp*.5);B.blk=8;B.psn=0;B.log+=' 残機を失った！HP回復';if(!B.hand.length)return turn();return render()}OVER=1;$v(`<h1>${ok?'異変解決':'力尽きた'}</h1><p>${ok?'八雲紫を退け、幻想郷に平穏が戻った。':`${G.act+1}章 ${G.step}ノードで敗北。`}</p><p class="log">デッキ${G.deck.length}枚 / 武器${G.w.length}個</p><button class="pri" onclick="title()">もう一度</button>`)}
+function over(ok){if(!ok&&G.lives>0&&alive().length){G.lives--;G.hp=Math.ceil(G.mhp*.5);B.blk=8;B.psn=0;B.log+=' 残機を失った！HP回復';if(!B.hand.length)return turn();return render()}OVER=1;$v(`<h1>${ok?'異変解決':'力尽きた'}</h1><p>${ok?'八雲紫を退け、幻想郷に平穏が戻った。':`${G.act+1}章 ${G.step}ノードで敗北。`}</p><p class="log">デッキ${G.deck.length}枚 / 武器${G.w.length}個</p><button class="pri" onclick="window.title()">もう一度</button>`)}
 const frzTry=(e,p)=>{if(e&&e.hp>0&&!e.fi&&!e.frz&&R(100)<p+(B.wx==='雪'?15:0)){e.frz=1;if(G.ch==='ci')B.blk+=2}};
 const frzSet=(e,n)=>{if(e&&e.hp>0&&!e.fi&&!e.frz){e.frz=n;if(G.ch==='ci')B.blk+=2}};
-function hit(e,v,pierce){if(B.pw.fi&&e.frz)v+=B.pw.fi;let a=0;if(!pierce){a=Math.min(e.blk,v);e.blk-=a;v-=a}B.dd=(B.dd||0)+Math.max(0,Math.min(v,e.hp));B.ok=(B.ok||0)+Math.max(0,v-Math.max(0,e.hp));e.hp-=v;e.h=1;FL.push({i:B.es.indexOf(e),v,a,c:CUR})}
+function hit(e,v,pierce){if(B.pw.fi&&e.frz)v+=Math.min(B.pw.fi,10);let a=0;if(!pierce){a=Math.min(e.blk,v);e.blk-=a;v-=a}B.dd=(B.dd||0)+Math.max(0,Math.min(v,e.hp));B.ok=(B.ok||0)+Math.max(0,v-Math.max(0,e.hp));e.hp-=v;e.h=1;FL.push({i:B.es.indexOf(e),v,a,c:CUR})}
 function calc(id,d){let v=d.dmg+(B.pw.atk||0)+(id==='bz'&&has('hb')?2:0)+(id==='sl'&&has('sk')?3:0);if(d.fire)v*=1+(has('hl')?.75:0)+(B.pw.fire||0);const cc=(has('yr')?20:0)+(has('gk')?20:0)+(has('gu2')?30:0)+(B.pw.cr||0)+(d.cr||0);const wx=B.wx;if(d.fire||TAG[id]==='f')v*=wx==='晴れ'?1.25:wx==='雨'?.75:1;if(TAG[id]==='i')v*=wx==='雨'?1.25:wx==='晴れ'?.85:1;if(d.mo&&B.td==='夜')v*=2;if(d.su&&B.td==='昼')v*=2;if(R(100)<cc)v*=has('yr')?3:2;if(B.blk>=10)v+=B.pw.bk||0;return Math.round(v*(B.nx||1))}
 function bet(o){const d=cs(o).d,t=alive().filter(e=>!e.bs&&e.hp<=e.m*d.rp/100).sort((a,b)=>a.hp-b.hp)[0];if(t){t.hp=0;B.log+=' 死の賭け成功'}else{G.hp-=d.fh;B.log+=' 死の賭け失敗'}}
 function drawN(n){for(let i=0;i<n;i++){if(!B.draw.length){B.draw=shuf(B.disc);B.disc=[]}if(!B.draw.length)return;const o=B.draw.pop();if(cs(o).d.dd){bet(o);continue}B.hand.push(o)}}
@@ -295,7 +295,7 @@ if(d.dc&&B.hand.length)B.pk={m:'d'};
 if(d.psn&&alive().length){const e=tgt();e.p=(e.p||0)+d.psn}if(d.psa)alive().forEach(e=>e.p=(e.p||0)+d.psa);if(d.fza)alive().forEach(e=>frzSet(e,1));if(d.gz)for(let j=0;j<d.gz;j++)gzp();if(d.fz1&&alive().length)frzSet(tgt(),1+(has('wt')?1:0));if(d.pdb&&alive().length){const e=tgt();e.p=(e.p||0)*2}if(d.rw){const h=B.hh||[],t=h[Math.max(0,h.length-1-d.rw)];if(t>G.hp)heal(t-G.hp)}if(d.ls&&B.dd)heal(Math.floor(B.dd*d.ls));if(d.up1){const x=B.hand.filter(c=>!c.up);if(x.length)pick(x).up=1}if(d.hot)B.hot=d.hot;
 if(d.sr){const i=B.draw.findIndex(c=>TAG[c.id]===d.sr);if(i>=0)B.hand.push(B.draw.splice(i,1)[0])}if(d.gs&&G.gold>=d.gs){G.gold-=d.gs;drawN(d.gdr)}if(d.rcl&&B.disc.length)B.hand.push(B.disc.splice(R(B.disc.length),1)[0]);if(d.nb)B.nb=1;if(d.dbf)alive().forEach(e=>{if(e.str>0)e.str=0});if(d.cp2)B.psn=0;if(d.pc)alive().forEach(e=>hit(e,Math.round(e.hp*d.pc*(e.bs?.5:1)),1));if(d.wd)wdEff(o);if(d.bd2){const n=B.disc.splice(0,Math.min(8,B.disc.length));B.disc.push(...B.hand);B.hand=n}if(d.bmb)B.bomb++;
 if(B.pw.pd)alive().forEach(e=>{if(e.h&&e.p>=5)e.p*=2});
-{const f=d.fire||TAG[o.id]==='f',m=G.ch==='pc'?2:1;B.es.forEach(e=>{if(e.hp<=0||!e.h)return;if(f&&e.frz){hit(e,6*m,1);B.log+=' 蒸気！'}if(f&&e.p>0){hit(e,e.p*2*m,1);e.p=0;B.log+=' 爆発！'}if(TAG[o.id]==='i'&&e.p>0){e.p+=3*m;B.log+=' 猛毒！'}})}
+{const f=d.fire||TAG[o.id]==='f',m=G.ch==='pc'?2:1;B.es.forEach(e=>{if(e.hp<=0||!e.h)return;if(f&&e.frz){hit(e,6*m,1);B.log+=' 蒸気！'}if(f&&e.p>0){hit(e,e.p*2*m,1);e.p=0;B.log+=' 爆発！'}if(TAG[o.id]==='i'&&e.p>0){e.p+=2*m;B.log+=' 猛毒！'}})}
 const tg=TAG[o.id];if(tg==='f'&&B.pw.fb)alive().forEach(e=>hit(e,B.pw.fb,0));if(tg==='s'&&B.pw.sd)drawN(B.pw.sd);
 if(!alive().length)return win();if(G.hp<=0)return over(false);render()}
 function pickC(i){const p=B.pk;if(p.m==='l'){const c=p.a[i];B.draw.splice(B.draw.length-p.a.length+i,1);B.hand.push(c);if(p.bt&&p.a.length>1){const r=B.draw.splice(B.draw.length-(p.a.length-1),p.a.length-1);B.draw.unshift(...r)}}else{const x=B.hand.splice(i,1)[0];if(!x.g)B.disc.push(x)}B.pk=null;render()}
@@ -317,7 +317,7 @@ const TG={f:'火',i:'氷',p:'毒',s:'星',k:'結界'},TAG={};
 const tag=(t,s)=>s.split(' ').forEach(k=>TAG[k]=t);
 Object.assign(C,{
 bo:{n:'八卦炉の暴走',c:2,d:{pw:'fb',v:2},u:{v:3},ch:'m'},
-zr:{n:'絶対零度',c:2,d:{pw:'fi',v:5},u:{v:7}},
+zr:{n:'絶対零度',c:2,d:{pw:'fi',v:4},u:{v:5}},
 pm:{n:'蔓延する毒',c:2,d:{pw:'pd',v:1},u:{c:1}},
 ss:{n:'星屑の軌跡',c:2,d:{pw:'sd',v:1},u:{c:1},ch:'m'},
 bj:{n:'結界の守護',c:2,d:{pw:'bk',v:3},u:{v:4},ch:'r'},
@@ -400,7 +400,7 @@ const mk=(t,c,dy)=>fxEl(`<div class="dm" style="left:${r.left+r.width/2-15+R(40)
 if(f.v>0){snd(f.p?'dmg':'hit');mk('-'+f.v,f.p?'#ff6b6b':f.c,0);jHit(el,f)}if(f.a>0){snd('blk');mk(f.a,'#5aa9ff',f.v>0?24:0)}if(f.g)mk('+'+f.g,'#5aa9ff',0);if(f.hl)mk('+'+f.hl,'#6bdc8b',0)},n*90))}
 const _bomb=bomb;bomb=function(){FL=[];CUR='#fff';_bomb();flush()};
 const DIFF=[{n:'Easy',t:'敵HP×1.3 攻撃×1.0',h:1.3,a:1},{n:'Normal',t:'敵HP×1.8 攻撃×1.15',h:1.8,a:1.15},{n:'Hard',t:'敵HP×2.4 攻撃×1.4',h:2.4,a:1.4},{n:'Lunatic',t:'敵HP×3.2 攻撃×1.8・残機1',h:3.2,a:1.8}];
-function scale(){const d=DIFF[G.lv==null?1:G.lv],ac=actMul(G.act);const S=mv=>mv.map(m=>m[0]==='a'?[m[0],Math.round(m[1]*d.a*ac),...m.slice(2)]:m[0]==='d'?[m[0],Math.round(m[1]*d.a*ac)]:m);B.es.forEach(e=>{e.hp=e.m=Math.round(e.m*d.h*ac);e.mv=S(e.mv);if(e.sp)e.sp={...e.sp,mv:S(e.sp.mv)};e.i=e.mv[e.k%e.mv.length]})}
+function scale(){const d0=DIFF[G.lv==null?1:G.lv],ac=actMul(G.act),rk=(G.lv>=2&&G.act===0)?([.5,.65,.8,.9][Math.max(0,(G.step||1)-1)]||1):1,d={h:1+(d0.h-1)*rk,a:1+(d0.a-1)*rk};const S=mv=>mv.map(m=>m[0]==='a'?[m[0],Math.round(m[1]*d.a*ac),...m.slice(2)]:m[0]==='d'?[m[0],Math.round(m[1]*d.a*ac)]:m);B.es.forEach(e=>{e.hp=e.m=Math.round(e.m*d.h*ac);e.mv=S(e.mv);if(e.sp)e.sp={...e.sp,mv:S(e.sp.mv)};e.i=e.mv[e.k%e.mv.length]})}
 const _start=start;start=function(k){$v(`<h2>難易度</h2><div class="ch">${DIFF.map((d,i)=>`<button onclick="go('${k}',${i})"><b>${d.n}</b><br><span class="log">${d.t}</span></button>`).join('')}</div>`)};
 function go(k,i){_start(k);G.lv=i;if(i===3)G.lives=1;map()}
 const Q={妖精:'ちょっと遊んであげる',大妖精:'えっと…がんばります！',霧の湖の妖精:'ここから先は通さないよ',リグル:'虫の知らせよ',橙:'にゃーん！',ミスティア:'夜雀の歌を聴きなさい',チルノ:'あたいったら最強ね！',ルーミア:'そーなのかー',小悪魔:'パチュリー様の魔はさせません',美鈴:'ここは通しませんよ！',パチュリー:'今日は喘息の調子が良いわ',アリス:'あなたも人形にしてあげる',咲夜:'お掃除しないとね',レミリア:'運命は私の手の中にあるわ',妖夢:'迷いなき一刀、受けてみなさい',紫:'境界を弄ぶのも悪くないわね',鈴仙:'狂気の瞳を見つめなさい',妹紅:'燃やし尽くしてあげる',幽々子:'あなたも桜の下で眠りなさい'};
@@ -489,7 +489,7 @@ ft:{n:'運命の糸',c:1,d:{look:3,bt:1},u:{look:5},ch:'re'},
 bc2:{n:'血の契約',c:0,d:{hp:5,en:2,ex:1},u:{hp:4},ch:'re'},
 ss2:{n:'スカーレットシュート',c:2,d:{dmg:5,hits:3,ls:.5},u:{dmg:7},ch:'re'},
 wd1:{n:'七曜の魔法',c:1,d:{wd:1},u:{c:0},ch:'pc'},
-sh2:{n:'上海人形',c:1,d:{pw:'dl',v:3},u:{v:4},ch:'al'},
+sh2:{n:'上海人形',c:1,d:{pw:'dl',v:4},u:{v:5},ch:'al'},
 hr3:{n:'蓬莱人形',c:2,d:{dmg:4,pq:2},u:{dmg:6,pq:3},ch:'al'},
 rb:{n:'首吊り蓬莱人形',c:3,d:{dmg:6,hits:4,rnd:1,pq:1},u:{hits:6},ch:'al'},
 hy:{n:'反魂蝶',c:2,d:{dmg:5,all:1,psa:3},u:{dmg:7,psa:4},ch:'yu'},
@@ -539,8 +539,8 @@ function rmR(){$v(head()+`<h2>削除するカード</h2><div class="row">${G.dec
 document.addEventListener('keydown',e=>{if(!document.querySelector('#app .me'))return;if(e.key==='Enter')endTurn();else if(/^[1-9]$/.test(e.key))play(+e.key-1)});
 const _o5=over;over=function(ok){const l=G.lives;_o5(ok);if(ok||G.lives===l)try{const h=JSON.parse(localStorage.getItem('tdh')||'[]');h.unshift({c:CH[G.ch].n,w:ok?'クリア':'敗北',a:G.act+1,s:G.step,d:G.deck.length,l:DIFF[G.lv==null?1:G.lv].n});localStorage.setItem('tdh',JSON.stringify(h.slice(0,10)))}catch(e){}};
 const _t4=title;title=function(){_t4();try{const h=JSON.parse(localStorage.getItem('tdh')||'[]');if(h.length)$('#app').insertAdjacentHTML('beforeend',`<h2>ラン履歴</h2><div class="log">${h.slice(0,5).map(r=>`${r.w} ${r.c} ${r.l} ${r.a}章${r.s} デッキ${r.d}枚`).join('<br>')}</div>`)}catch(e){}};
-DIFF.push({n:'Extra',t:'敵HP×4.5 攻撃×2.2・残機0',h:4.5,a:2.2});
-function go(k,i){_start(k);G.lv=i;G.lives=i===3?1:i===4?0:2;map()}
+DIFF.push({n:'Extra',t:'敵HP×3.8 攻撃×2.0・残機1',h:3.8,a:2});
+function go(k,i){_start(k);G.lv=i;G.lives=i>=3?1:2;map()}
 function ach(n){try{const a=JSON.parse(localStorage.getItem('tda')||'[]');if(!a.includes(n)){a.push(n);localStorage.setItem('tda',JSON.stringify(a));fxQ(()=>fxBn('実績解除：'+n,'#e8c468'),1500)}}catch(e){}}
 const _p3=play;play=function(i){_p3(i);if(document.querySelector('#app .me')&&B&&B.es)G.dm=(G.dm||0)+(B.dd||0)};
 const _w4=win;win=function(){if(B&&B.es&&B.es.every(e=>e.hp<=0)){G.tn=(G.tn||0)+(B.hh||[]).length;if(B.kind===3&&!B.tk)ach('ノーダメージでボス撃破')}_w4()};
@@ -621,7 +621,7 @@ z37:{n:'彼岸の花',c:1,d:{blk:6,psa:2},u:{blk:8,psa:3},ch:'yu'},
 z38:{n:'雪符「ダイヤモンドブリザード」',c:2,d:{dmg:5,all:1,fp:50},u:{dmg:7,fp:65},ch:'ci'},
 z39:{n:'冷たい晩餐',c:1,d:{dmg:3,fp:60,blk:3},u:{dmg:4,blk:5},ch:'ci'},
 z40:{n:'氷塊「グレートクラッシャー」',c:3,d:{dmg:8,all:1,fb:12},u:{dmg:10,fb:16},ch:'ci'},
-z41:{n:'あたいったら最強ね！',c:1,d:{pw:'fi',v:3,blk:4},u:{v:4,blk:6},ch:'ci'},
+z41:{n:'あたいったら最強ね！',c:1,d:{pw:'fi',v:2,blk:4},u:{v:3,blk:6},ch:'ci'},
 z42:{n:'氷精の悪戯',c:0,d:{fz1:1,enl:1},u:{enl:0},ch:'ci'},
 z43:{n:'かき氷',c:1,d:{heal:5,blk:3},u:{heal:7,blk:5},ch:'ci'}});
 tag('k','z01 z02 z05');tag('s','z06 z09');tag('f','z07 z08 z14 z17 z26 z28');tag('t','z11 z12 z13');
@@ -637,7 +637,7 @@ function cxSeen(t,id){if(!id)return;const x=cxLoad();if(!x[t][id]){x[t][id]=1;cx
 const SYN=[
 ['steam','蒸気反応','火と氷が出会うと、何かが起きる…','凍結中の敵に火属性の攻撃を当てると、追加で6ダメージ（パチュリーは2倍）。'],
 ['boom','毒の爆発','毒に炎を近づけると…','毒状態の敵に火属性の攻撃を当てると、毒の2倍のダメージで爆発し、毒が消える。'],
-['venom','猛毒化','氷と毒の相性は…','毒状態の敵に氷属性のカードを使うと、毒が+3される（パチュリーは+6）。'],
+['venom','猛毒化','氷と毒の相性は…','毒状態の敵に氷属性のカードを使うと、毒が+2される（パチュリーは+4）。'],
 ['doll','人形の糸','人形が戦場にいる時、糸を引くと…','人形（毎ターンダメージ）を出した状態で糸系のカードを使うと、人形のダメージ分が追加される。'],
 ['weather','天気の相性','空模様を味方につけると…','晴れは火属性+25%、雨は氷属性+25%（逆の天気では弱まる）。天気は戦闘開始時に決まる。'],
 ['daynight','昼夜の使い分け','お日様とお月様…','日符は昼に、月符は夜に使うとダメージ2倍。時間帯は戦闘開始時に決まる。'],
