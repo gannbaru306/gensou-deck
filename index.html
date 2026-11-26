@@ -60,6 +60,7 @@ button.pri{background:var(--red);border-color:var(--red);font-weight:900}
 .win .r3{flex:1;overflow-y:auto;color:var(--dim);border-top:1px solid var(--ln);padding-top:4px}
 .ar{position:absolute;top:50%;z-index:2;transform:translateY(-50%);min-width:0;flex:none;width:40px;height:56px;padding:0;font-size:30px;line-height:1;text-align:center;background:#17132bcc;border-color:var(--gold);color:var(--gold)}.ar.l{left:0}.ar.r{right:0}
 @media (prefers-reduced-motion:reduce){.chs{transition:none}}
+.ac{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px}.ai{border:1px solid var(--ln);background:var(--pn);padding:6px 8px;border-radius:3px;opacity:.55;font-size:12px;line-height:1.4}.ai.on{opacity:1;border-color:var(--gold)}.ai b{display:block;color:var(--gold);font-size:13px}.ai span{color:var(--dim)}.pg{height:3px;background:var(--ln);margin-top:4px}.pg i{display:block;height:100%;background:var(--gold)}
 #fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}#fx>*{position:absolute}
 .bn{left:0;right:0;top:36%;padding:14px 20px;font-size:clamp(18px,5vw,28px);font-weight:900;letter-spacing:.1em;text-align:center;color:#fff;background:linear-gradient(90deg,#0000,var(--c) 15%,var(--c) 85%,#0000);text-shadow:0 0 10px #000;animation:bn 1.4s ease-out forwards}
 @keyframes bn{0%{transform:translateX(100%);opacity:0}15%{transform:none;opacity:1}80%{opacity:1}100%{transform:translateX(-15%);opacity:0}}
@@ -287,17 +288,18 @@ function hit(e,v,pierce){if(B.pw.fi&&e.frz)v+=Math.min(B.pw.fi,10);let a=0;if(!p
 function calc(id,d){let v=d.dmg+(B.pw.atk||0)+(id==='bz'&&has('hb')?2:0)+(id==='sl'&&has('sk')?3:0);if(d.fire)v*=1+(has('hl')?.75:0)+(B.pw.fire||0);const cc=(has('yr')?20:0)+(has('gk')?20:0)+(has('gu2')?30:0)+(B.pw.cr||0)+(d.cr||0);const wx=B.wx;if(d.fire||TAG[id]==='f')v*=wx==='晴れ'?1.25:wx==='雨'?.75:1;if(TAG[id]==='i')v*=wx==='雨'?1.25:wx==='晴れ'?.85:1;if(d.mo&&B.td==='夜')v*=2;if(d.su&&B.td==='昼')v*=2;if(R(100)<cc)v*=has('yr')?3:2;if(B.blk>=10)v+=B.pw.bk||0;return Math.round(v*(B.nx||1))}
 function bet(o){const d=cs(o).d,t=alive().filter(e=>!e.bs&&e.hp<=e.m*d.rp/100).sort((a,b)=>a.hp-b.hp)[0];if(t){t.hp=0;B.log+=' 死の賭け成功'}else{G.hp-=d.fh;B.log+=' 死の賭け失敗'}}
 function drawN(n){for(let i=0;i<n;i++){if(!B.draw.length){B.draw=shuf(B.disc);B.disc=[]}if(!B.draw.length)return;const o=B.draw.pop();if(cs(o).d.dd){bet(o);continue}B.hand.push(o)}}
+function mirCheck(){if(G.ch!=='sn'||B.mir)return;const mx=G.mhp||56;if(G.hp>Math.floor(mx*0.3))return;B.mir=1;G.mirN=(G.mirN||0)+1;heal(12);drawN(2);B.log+=' 奇跡！HPを12回復し、2枚引く'}
 function turn(first){B.en=Math.max(0,3-B.fz+(B.pw.en||0));B.fz=0;B.evade=0;B.ob=has('ob')?1:0;B.iw=0;B.rf=0;B.nb=0;(B.hh=B.hh||[]).push(G.hp);B.ca=0;if(G.ch==='y'&&!B.nx)B.nx=1.6;if(!first)B.blk=0;B.blk+=(B.pw.tb||0);
 if(B.psn>0){G.hp-=B.psn;B.psn--}
 if(B.pw.rg)heal(B.pw.rg);if(B.hot>0){heal(3);B.hot--}
 if(G.ch==='yu')B.es.forEach(e=>{if(e.hp>0){let v=Math.min(10,Math.max(1,Math.round(e.m*.02)));if(e.bs)v=Math.ceil(v/2);e.hp-=v}});if(B.pw.dl&&alive().length)hit(pick(alive()),B.pw.dl,0);
 if(G.hp<=0)return over(false);if(!alive().length)return win();
 drawN(Math.max(1,5+(has('br')?1:0)+(has('pa')?1:0)+(B.pw.dr||0)-B.dn));B.dn=0;
-if(G.hp<=0)return over(false);if(!alive().length)return win();render()}
+if(G.hp<=0)return over(false);if(!alive().length)return win();mirCheck();render()}
 function play(i){if(B.pk)return;const o=B.hand[i],c=cs(o),d=c.d;if(B.en<c.cost)return;B.en-=c.cost;B.hand.splice(i,1);if(!o.g&&!d.pw&&!d.ex)B.disc.push(o);
 if(d.hp){G.hp-=d.hp;if(G.hp<=0)return over(false)}
 B.dd=0;B.es.forEach(e=>e.h=0);let kd=0,atk=0;if(d.rp&&!d.dd&&alive().length){const e=tgt();if(!e.bs&&e.hp<=e.m*d.rp/100){e.hp=0;kd=1;B.log='即死'}}
-if(d.dmg&&!kd){atk=1;for(let h=0;h<(d.hits||1);h++){const al=alive();if(!al.length)break;const ts=(d.all||has('gu'))?[...al]:[d.rnd?pick(al):tgt()];
+if(d.dmg&&!kd){atk=1;for(let h=0;h<(d.hits||1)+(has('gohei')&&d.hits?1:0);h++){const al=alive();if(!al.length)break;const ts=(d.all||has('gu'))?[...al]:[d.rnd?pick(al):tgt()];
 if(!d.all&&!d.rnd&&!has('gu')&&has('on')&&R(2)){const x=al.filter(e=>e!==ts[0]);if(x.length)ts.push(pick(x))}
 ts.forEach(e=>hit(e,calc(o.id,d)+(d.lo&&e.hp<=e.m/2?d.lo:0)+(d.fb&&e.frz?d.fb:0),d.pierce));
 if(d.splash&&alive().length)hit(pick(alive()),d.splash,0)}
@@ -343,7 +345,7 @@ else if(k==='d')e.blk=v;else e.str+=has('ofd')?0:v;
 if(e.wk)e.wk--;if(e.cd){e.cd--;if(!e.cd){tout(e,log);fxQ(()=>fxBn('スペルカード・タイムアウト','#e5333f'),1500)}}abil(e,log)}
 if(G.hp<=0)return over(false);if(!alive().length)return win();
 {const t0=B.tkp||0;B.nd=(B.tk||0)===t0?(B.nd||0)+1:0;B.tkp=B.tk||0;if(B.nd>=2||B.hh.length>=8){alive().forEach(e=>e.str+=1);log.push('敵の弾幕が激しさを増した')}}
-alive().forEach(e=>{e.k++;e.i=e.mv[e.k%e.mv.length]});B.log=log.join(' ');turn()}
+alive().forEach(e=>{e.k++;e.i=e.mv[e.k%e.mv.length]});B.log=log.join(' ');mirCheck();turn()}
 const TG={f:'火',i:'氷',p:'毒',s:'星',k:'結界'},TAG={};
 const tag=(t,s)=>s.split(' ').forEach(k=>TAG[k]=t);
 Object.assign(C,{
@@ -384,7 +386,7 @@ E.妖夢.sp={at:.5,n:'人鬼「未来永劫斬」',mv:[['a',6,4],['a',18]]};
 E.紫.sp={at:.5,n:'境符「波と粒の境界」',mv:[['a',7,3],['b',3],['a',20,1,'x']]};
 E.レミリア.sp={at:.5,n:'神槍「スピア・ザ・グングニル」',mv:[['a',22,1,'x'],['a',8,3],['b',3]]};
 E.幽々子.sp={at:.6,n:'「死蝶『華胥の永眠』」',mv:[['a',9,3,'x'],['a',24],['b',2],['a',7,4]]};
-Object.assign(W,{uch:['天狗の団扇','毎ターン開始時ブロック+3'],rk:['楼観剣','攻撃のダメージ+1'],oni:['鬼の盃','戦闘開始時、攻撃+2・HP-3'],ssb:['賽銭箱','勝利時お賽銭+20'],yak:['永遠亭の薬','勝利時HP+6']});
+Object.assign(W,{uch:['天狗の団扇','毎ターン開始時ブロック+3'],rk:['楼観剣','攻撃のダメージ+1'],oni:['鬼の盃','戦闘開始時、攻撃+2・HP-3'],ssb:['賽銭箱','勝利時お賽銭+20'],yak:['永遠亭の薬','勝利時HP+6'],gohei:['御幣','多段ヒットカードのヒット数+1']});
 Object.assign(C,{gx:{n:'グレイズの極意',c:1,d:{blk:3,gz:3},u:{blk:5}},bc:{n:'ボム補充',c:1,d:{bmb:1,ex:1},u:{c:0}},bs:{n:'ブレイジングスター',c:2,d:{dmg:14,fire:1,pierce:1,hp:3},u:{dmg:19},ch:'m'}});
 TAG.gx='k';TAG.bs='f';UNC.push('gx','bc','bs');
 function gzp(){B.gz++;if(B.gz>=3){B.gz-=3;B.fz-=1;try{synUnlock('graze')}catch(e){}}}
@@ -510,7 +512,8 @@ re:{n:'レミリア・スカーレット',hp:62,w:'gu2',deck:'bz bz bz kk kk kk 
 pc:{n:'パチュリー・ノーレッジ',hp:62,w:'pa',deck:'bz bz kk kk z44 wd1 wd1 qf sh z44 ps',t:'元素：属性反応のダメージ2倍。反応のたび1枚引き（1ターン1回）・お賽銭+5（1戦闘30まで）。攻撃+1。曜日で変わる魔法'},
 al:{n:'アリス・マーガトロイド',hp:60,w:'shd',deck:'bz bz bz z30 kk kk kk sh2 sh2 sh',t:'人形遣い：初期武器の人形が毎ターン4ダメージ'},
 yu:{n:'西行寺幽々子',hp:50,w:'fan',deck:'bz bz bz ps ps kk kk kk zk zk',t:'死の香り：毎ターン敵の最大HP2%減（上限10・ボス半減）／死蝶：撃破で回復と全体ダメージ'},
-ci:{n:'チルノ',hp:44,w:'ice',deck:'iq iq iq iz iz kk kk kk iw sh',t:'凍結特化。凍結させるとブロック+2、凍結中の敵へ+2ダメージ'}});
+ci:{n:'チルノ',hp:44,w:'ice',deck:'iq iq iq iz iz kk kk kk iw sh',t:'凍結特化。凍結させるとブロック+2、凍結中の敵へ+2ダメージ'},
+sn:{n:'東風谷早苗',hp:56,w:'gohei',deck:'bz bz bz kk kk kk z50 z50 z51 sh',t:'奇跡：戦闘に1回、HPが30%以下になったときHP12回復・2枚引く。御幣：多段ヒット+1ヒット'}});
 Object.assign(W,{gu2:['神槍グングニル','クリティカル率+30%。攻撃のダメージ+1'],hk1:['白楼剣','攻撃のダメージ+2'],yk:['八雲の扇','戦闘開始時手札+1'],shd:['上海人形','毎ターン敵に4ダメージ'],ofd:['博麗の御札','敵の強化を無効化'],bks:['弾幕の結界','戦闘開始時ブロック+10'],hrb:['博麗の鈴','戦闘開始時、敵全体に毒2']});
 Object.assign(C,{
 yi:{n:'居合『一閃』',c:1,d:{dmg:8,rt:1},u:{dmg:11},ch:'y'},
@@ -576,7 +579,7 @@ function ach(n){try{const a=JSON.parse(localStorage.getItem('tda')||'[]');if(!a.
 const _p3=play;play=function(i){_p3(i);if(document.querySelector('#app .me')&&B&&B.es)G.dm=(G.dm||0)+(B.dd||0)};
 const _w4=win;win=function(){if(B&&B.es&&B.es.every(e=>e.hp<=0)){G.tn=(G.tn||0)+(B.hh||[]).length;if(B.kind===3&&!B.tk)ach('ノーダメージでボス撃破')}_w4()};
 const _o6=over;over=function(ok){const l=G.lives;_o6(ok);if(ok||G.lives===l){if(ok){ach('異変解決');ach(CH[G.ch].n+'でクリア');if(G.lv>=3)ach('Lunatic以上でクリア');if(G.lives>=2)ach('残機を失わずにクリア')}$('#app').insertAdjacentHTML('beforeend',`<p class="log">ターン数${G.tn||0}　与ダメージ${G.dm||0}　お賽銭${G.gold}　デッキ${G.deck.length}枚　残機${G.lives}</p>`)}};
-const _t5=title;title=function(){_t5();try{const a=JSON.parse(localStorage.getItem('tda')||'[]');if(a.length)$('#app').insertAdjacentHTML('beforeend',`<h2>実績 (${a.length})</h2><div class="log">${a.join(' / ')}</div>`)}catch(e){}};
+const _t5=title;title=function(){_t5();try{const a=JSON.parse(localStorage.getItem('tda')||'[]');}catch(e){}};
 // ---- バランス調整 ----
 const WMAX=Infinity;
 const EXH={xs:300,xk:400,xh:500};
@@ -757,6 +760,15 @@ z48:{n:'叡智の蓄積',c:2,d:{pw:'dr',v:1},u:{c:1},ch:'pc'},
 z49:{n:'稀覯本の取引',c:1,d:{gold:20,draw:1},u:{gold:30},ch:'pc'}});
 tag('f','z44');tag('i','z45');
 UNC.push('z45','z46','z48','z49');
+// ---- 早苗専用カード ----
+Object.assign(C,{
+z50:{n:'風払い',c:1,d:{dmg:2,hits:2,draw:1},u:{dmg:3},ch:'sn'},
+z51:{n:'奇跡「神風」',c:1,d:{dmg:2,hits:3},u:{hits:4},ch:'sn'},
+z52:{n:'秘術「グレイソーマタージ」',c:2,d:{dmg:5,hits:3},u:{dmg:6},ch:'sn'},
+z53:{n:'奇跡「ミラクルフルーツ」',c:1,d:{heal:7,draw:1},u:{heal:10},ch:'sn'},
+z54:{n:'神徳「五穀豊穣ライスシャワー」',c:2,d:{blk:10,heal:4},u:{blk:14,heal:6},ch:'sn'},
+z55:{n:'大奇跡「八坂の神風」',c:3,d:{dmg:4,hits:4,all:1},u:{dmg:5},ch:'sn'}});
+UNC.push('z51','z52','z53','z54');RARE.push('z55');
 
 // ---- 演出 ----
 let JUICE=(()=>{try{const v=localStorage.getItem('tdj');if(v!==null)return v==='1'}catch(e){}try{return !matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return true}})();
@@ -828,6 +840,54 @@ function evNew(n){const h=head();if(n===7)$v(h+`<h2>妖怪の待ち伏せ</h2><p
 else $v(h+`<h2>肝試しの誘い</h2><p>魔理沙が肝試しに誘ってくる。奥には強い妖怪がいるらしい。</p><div class="ch"><button onclick="fight(pick(ACT[G.act].El),1)">挑む（エリート戦）</button><button onclick="map()">断る</button></div>`)}
 EV[7]=['#e5333f','rings','妖怪の待ち伏せ'];EV[8]=['#9b7ede','rain','肝試しの誘い'];
 const _evx3=evx;evx=function(n){if(n===7||n===8){evNew(n);const v=EV[n];fxRun(v[1],v[0]);fxBn(v[2],v[0]);return}_evx3(n)};
+// ---- 実績(拡張) ----
+let S=null;
+const sLoad=()=>{if(S)return S;try{S=JSON.parse(localStorage.getItem('tds')||'null')}catch(e){}S=S||{};S.cc=S.cc||{};S.cl=S.cl||{};S.dc=S.dc||{};return S};
+const sAdd=(k,v=1)=>{sLoad()[k]=(S[k]||0)+v};
+const sMax=(k,v)=>{if(v>(sLoad()[k]||0))S[k]=v};
+const AL=()=>{try{return JSON.parse(localStorage.getItem('tda')||'[]')}catch(e){return[]}};
+const AD=[];
+const T=(c,st,l,df,h)=>l.forEach(([th,n])=>AD.push({c,st,th,n,d:df(th),h}));
+T('通算','runs',[[1,'初めての異変'],[10,'異変の常連'],[50,'幻想郷の住人'],[100,'幻想郷の古参'],[300,'異変の守護者']],t=>t+'回挑戦する');
+T('通算','wins',[[1,'解決者見習い'],[5,'解決の常連'],[10,'博麗の名代'],[25,'異変解決のプロ'],[50,'幻想郷の守り人'],[100,'永遠の解決人']],t=>t+'回異変を解決する');
+T('通算','deaths',[[1,'初めての敗北'],[10,'七転び八起き'],[50,'不屈の挑戦者']],t=>t+'回敗北する');
+T('通算','turns',[[100,'長期戦'],[500,'持久戦'],[2000,'千日手']],t=>'通算'+t+'ターン戦う');
+T('戦闘','battles',[[10,'弾幕ごっこ入門'],[50,'弾幕ごっこ慣れ'],[100,'百戦錬磨'],[300,'千本ノック'],[1000,'弾幕の鬼']],t=>t+'回戦闘に勝利');
+T('戦闘','kills',[[50,'妖精狩り'],[200,'妖怪退治'],[1000,'百鬼夜行'],[3000,'幻想郷の脅威']],t=>'敵を通算'+t+'体撃破');
+T('戦闘','elites',[[1,'強敵撃破'],[10,'強者殺し'],[30,'エリートハンター'],[100,'百人斬り']],t=>'エリートを'+t+'体撃破');
+T('戦闘','bosses',[[1,'ボス撃破'],[10,'ボスハンター'],[30,'ラスボスキラー'],[100,'異変の黒幕']],t=>'ボスを'+t+'体撃破');
+T('戦闘','caps',[[1,'スペルカード取得'],[10,'スペカ収集家'],[30,'スペカ蒐集家'],[100,'スペカの王']],t=>'スペルカードを'+t+'枚取得');
+T('戦闘','nd',[[1,'無傷の勝利'],[10,'華麗な回避'],[30,'グレイズの達人'],[100,'当たらなければ']],t=>'ノーダメージで'+t+'回戦闘に勝利');
+T('戦闘','fast',[[1,'速攻'],[10,'疾風迅雷'],[50,'電光石火']],t=>'3ターン以内に'+t+'回勝利');
+T('戦闘','ot',[[1,'ワンターンキル'],[10,'瞬殺の使い手']],t=>'1ターンで'+t+'回勝利',1);
+T('戦闘','low',[[1,'瀕死の勝利'],[10,'崖っぷち']],t=>'HP10%以下で'+t+'回勝利',1);
+T('火力','dmg',[[1000,'千の弾幕'],[10000,'万の弾幕'],[50000,'十万の弾幕'],[200000,'億千の弾幕'],[1000000,'星を砕く弾幕']],t=>'通算'+t+'ダメージ');
+T('火力','maxhit',[[30,'重い一撃'],[60,'必殺の一撃'],[100,'会心の一撃'],[200,'伝説の一撃'],[400,'神の一撃']],t=>'1枚で'+t+'ダメージ以上');
+T('火力','cards',[[100,'カード使い'],[500,'札の扱い'],[2000,'カードマスター'],[5000,'札の化身'],[10000,'万札の主']],t=>'カードを通算'+t+'枚使用');
+T('探索','buys',[[1,'初めての買い物'],[10,'常連客'],[30,'上得意'],[100,'店の主']],t=>'商店で'+t+'回購入');
+T('探索','nr',[[5,'ひと休み'],[25,'休憩の達人'],[75,'縁側の住人']],t=>'休憩所を'+t+'回訪れる');
+T('探索','nc',[[1,'宝箱発見'],[10,'トレジャーハンター'],[30,'宝箱マニア']],t=>'宝箱を'+t+'個開ける');
+T('探索','nv',[[5,'出来事に遭遇'],[25,'イベント通'],[75,'幻想郷の旅人']],t=>'イベントに'+t+'回遭遇');
+T('探索','gold',[[500,'お賽銭箱いっぱい'],[999,'お賽銭カンスト']],t=>'お賽銭を'+t+'所持する');
+T('探索','act',[[5,'終わらない異変'],[8,'果てなき幻想'],[12,'幻想郷の果て']],t=>'エンドレスで'+t+'章に到達');
+const AS=(c,n,d,h)=>AD.push({c,n,d,h});
+AS('ラン','異変解決','いずれかのキャラでクリア');AS('ラン','ノーダメージでボス撃破','ボスをノーダメージで撃破');AS('ラン','Lunatic以上でクリア','Lunatic以上でクリア');AS('ラン','残機を失わずにクリア','残機を失わずにクリア');
+AS('ラン','ミニマリスト','デッキ12枚以下でクリア');AS('ラン','大所帯','デッキ40枚以上でクリア');AS('ラン','完全強化','全カードを強化してクリア');AS('ラン','武器コレクター','武器4個以上でクリア');
+AS('ラン','速攻クリア','総ターン60以内でクリア');AS('ラン','超速攻クリア','総ターン40以内でクリア',1);AS('ラン','資産家','お賽銭500以上でクリア');AS('ラン','背水の陣','Lunatic以上で残機を失わずにクリア');
+AS('戦闘','エリート無傷撃破','エリートをノーダメージで撃破');AS('戦闘','電光石火のボス撃破','5ターン以内にボスを撃破');AS('戦闘','一戦で300ダメージ','1戦闘で300以上のダメージ');AS('戦闘','紙一重','HP1で戦闘に勝利',1);AS('戦闘','ご利益いっぱい','早苗の奇跡を1ランで5回発動',1);
+const ACS=()=>{const l=[];Object.entries(CH).forEach(([k,c])=>{l.push({c:'キャラ',n:c.n+'でクリア',d:c.n+'でクリア',v:()=>sLoad().cc[k]?1:0,th:1});l.push({c:'キャラ',n:c.n+'でLunatic以上クリア',d:c.n+'でLunatic以上クリア',v:()=>sLoad().cl[k]?1:0,th:1})});const nc=Object.keys(CH).length;l.push({c:'キャラ',n:'全員で異変解決',d:'全キャラでクリア',v:()=>Object.keys(sLoad().cc).length,th:nc});l.push({c:'キャラ',n:'全員でLunatic制覇',d:'全キャラでLunatic以上クリア',v:()=>Object.keys(sLoad().cl).length,th:nc,h:1});DIFF.forEach((x,i)=>l.push({c:'難易度',n:x.n+'でクリア',d:x.n+'の難易度でクリア',v:()=>sLoad().dc[i]?1:0,th:1}));l.push({c:'難易度',n:'全難易度制覇',d:'全ての難易度でクリア',v:()=>Object.keys(sLoad().dc).length,th:DIFF.length});
+const cx=(t,o)=>()=>Object.keys(cxLoad()[t]).length;[[10,'c','カード'],[30,'c','カード'],[60,'c','カード']].forEach(([n,t,w])=>l.push({c:'図鑑',n:w+'図鑑'+n+'種',d:w+'を'+n+'種発見',v:cx(t),th:n}));l.push({c:'図鑑',n:'カード図鑑コンプ',d:'全カードを発見',v:cx('c'),th:Object.keys(C).length});[[5,'w'],[10,'w'],[20,'w']].forEach(([n,t])=>l.push({c:'図鑑',n:'武器図鑑'+n+'種',d:'武器を'+n+'種発見',v:cx(t),th:n}));l.push({c:'図鑑',n:'武器図鑑コンプ',d:'全武器を発見',v:cx('w'),th:Object.keys(W).length});l.push({c:'図鑑',n:'スペカ図鑑コンプ',d:'全スペルカードを発見',v:cx('s'),th:Object.keys(SPN).length,h:1});return l};
+const ALL=()=>[...AD.map(a=>a.st?{...a,v:()=>sLoad()[a.st]||0}:a),...ACS()];
+const RK=[[0,'幻想郷の新入り'],[10,'巫女見習い'],[25,'異変解決人'],[50,'幻想郷の英雄'],[75,'弾幕の達人'],[100,'幻想郷の伝説']];
+function ck(){try{const a=ALL(),u=AL();a.forEach(x=>{if(x.v&&!u.includes(x.n)&&x.v()>=x.th)ach(x.n)});const n=AL().length,t=a.length;[25,50,75,100].forEach((p,i)=>{const nm=['実績の入口','実績の達人','実績の鬼','幻想郷の全て'][i];if(n>=Math.ceil(t*p/100)&&!AL().includes(nm))ach(nm)});S&&localStorage.setItem('tds',JSON.stringify(S))}catch(e){}}
+function achView(){const a=ALL(),u=AL(),m=['実績の入口','実績の達人','実績の鬼','幻想郷の全て'],n=u.length,t=a.length+4,p=Math.floor(n/t*100),rk=RK.filter(r=>p>=r[0]).pop()[1];const cats=[...new Set(a.map(x=>x.c))];
+$v(`<h1>実績</h1><p class="log">${n} / ${t}（${p}%）　称号：<b>${rk}</b></p>`+cats.map(c=>{const l=a.filter(x=>x.c===c);return`<h2>${c} (${l.filter(x=>u.includes(x.n)).length}/${l.length})</h2><div class="ac">${l.map(x=>{const o=u.includes(x.n),v=x.v?Math.min(x.v(),x.th):0;return`<div class="ai ${o?'on':''}"><b>${o||!x.h?x.n:'？？？'}</b><span>${o||!x.h?x.d:'条件は秘密'}</span>${!o&&x.th>1&&!x.h?`<div class="pg"><i style="width:${v/x.th*100}%"></i></div><span>${v}/${x.th}</span>`:''}</div>`}).join('')}</div>`}).join('')+`<h2>称号</h2><p class="log">${m.map((x,i)=>(u.includes(x)?'◎':'○')+x).join('　')}</p><button class="pri" onclick="window.title()">戻る</button>`)}
+const _p8=play;play=function(i){const o=B&&B.hand?B.hand[i]:0,d0=B&&B.dd||0;_p8(i);try{if(o&&B.hand.indexOf(o)<0){const dd=(B.dd||0)-d0;sAdd('cards');if(dd>0){sAdd('dmg',dd);sMax('maxhit',dd)}}}catch(e){}};
+const _w9=win;win=function(){const al=B&&B.es&&B.es.every(e=>e.hp<=0)&&!B.ac;if(al){B.ac=1;const k=B.kind,t=(B.hh||[]).length;sAdd('battles');sAdd('kills',B.es.length);sAdd('turns',t);sAdd('caps',B.es.filter(e=>e.cd>0).length);if(k===1){sAdd('elites');if(!B.tk)ach('エリート無傷撃破')}if(k===3){sAdd('bosses');if(t<=5)ach('電光石火のボス撃破')}if(!B.tk)sAdd('nd');if(t<=3)sAdd('fast');if(t<=1)sAdd('ot');if(G.hp<=Math.ceil(G.mhp*.1))sAdd('low');if(G.hp===1)ach('紙一重');if((B.dd||0)>=300)ach('一戦で300ダメージ');if((G.mirN||0)>=5)ach('ご利益いっぱい')}_w9();if(al){sMax('gold',G.gold);if(G.endless)sMax('act',G.act);ck()}};
+const _n9=node;node=function(k){try{if('rcv'.includes(k))sAdd('n'+k)}catch(e){}_n9(k)};
+['buyC','buyW'].forEach(n=>{const f=window[n];if(typeof f==='function')window[n]=function(){f.apply(this,arguments);sAdd('buys');ck()}});
+const _o9=over;over=function(ok){const l=G.lives;_o9(ok);try{if(ok||G.lives===l){sAdd('runs');if(!ok)sAdd('deaths');else{const s=sLoad(),lv=G.lv==null?1:G.lv;sAdd('wins');s.cc[G.ch]=1;if(lv>=3)s.cl[G.ch]=1;s.dc[lv]=1;if(G.deck.length<=12)ach('ミニマリスト');if(G.deck.length>=40)ach('大所帯');if(G.deck.every(c=>c.up))ach('完全強化');if(G.w.length>=4)ach('武器コレクター');if((G.tn||0)<=60)ach('速攻クリア');if((G.tn||0)<=40)ach('超速攻クリア');if(G.gold>=500)ach('資産家');if(lv>=3&&G.lives>=1)ach('背水の陣')}ck()}}catch(e){}};
+const _t9=title;title=function(){_t9();ck();try{const n=AL().length,t=ALL().length+4,p=Math.floor(n/t*100);$('#app').insertAdjacentHTML('beforeend',`<h2>実績 ${n}/${t}</h2><p class="log">称号：${RK.filter(r=>p>=r[0]).pop()[1]}</p><button onclick="achView()">実績一覧を見る</button>`)}catch(e){}};
 let OVER=0;
 const _renderO=render;render=function(){if(OVER)return;_renderO()};
 const _winO=win;win=function(){if(OVER)return;_winO()};
