@@ -2,14 +2,16 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>幻想デッキ録</title>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;900&family=Noto+Sans+JP:wght@400;700&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#17132b;--pn:#251e44;--ink:#efe9ff;--dim:#a79bd0;--red:#d1343f;--gold:#e8c468;--ice:#7fc8e8;--ln:#4a3f7a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",serif;min-height:100vh}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;min-height:100vh}
+:root{--mc:"Cinzel","Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",serif}
+h1,h2,.bn,.card .n,.en b,.cbx,.dm,.hd b{font-family:var(--mc)}
 #app{max-width:860px;margin:0 auto;padding:12px}
-h1{font-size:34px;font-weight:900;margin:24px 0 4px;letter-spacing:.2em}
+h1{font-size:34px;font-weight:900;margin:24px 0 4px;letter-spacing:.2em;background:linear-gradient(180deg,#fff 20%,#f3dc9a 60%,#e8c468);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 6px rgba(209,52,63,.55)) drop-shadow(0 2px 2px rgba(120,10,25,.8))}
 h2{font-size:20px;margin:12px 0}
 button{font:inherit;color:var(--ink);background:var(--pn);border:1px solid var(--ln);padding:8px 14px;cursor:pointer;border-radius:3px}
 button:hover:not(:disabled){border-color:var(--gold)}button:disabled{opacity:.4;cursor:default}
@@ -25,7 +27,7 @@ button.pri{background:var(--red);border-color:var(--red);font-weight:900}
 .it{color:var(--gold);font-weight:900}
 .card{width:108px;min-height:140px;padding:8px;background:var(--pn);border:1px solid var(--ln);border-top:4px solid var(--dim);text-align:left;display:flex;flex-direction:column;gap:4px}
 .card.r{border-top-color:var(--red)}.card.m{border-top-color:var(--gold)}
-.card .c{font-size:12px;color:var(--gold)}.card .n{font-weight:900;font-size:14px}.card .d{font-size:12px;color:var(--dim)}
+.card .c{font-size:12px;color:var(--gold)}.card .n{font-weight:900;font-size:14px;letter-spacing:-.02em}.card .d{font-size:12px;color:var(--dim)}
 .card:disabled{opacity:.35}
 .card.nw{opacity:.6}
 .mpa circle:nth-child(2){animation:mpp 1.1s infinite}@keyframes mpp{50%{stroke-width:7}}
