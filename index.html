@@ -142,7 +142,7 @@ ml:{n:'魔法の研究',c:2,d:{upall:1},u:{c:1},ch:'m'},
 mb:{n:'無茶な魔力',c:0,d:{dmg:8,fire:1,hp:3},u:{dmg:11},ch:'m'},
 fc:{n:'複製魔法',c:1,d:{cp:1},u:{cp:2},ch:'m'},
 il:{n:'イリュージョンレーザー',c:2,d:{dmg:8,all:1,fire:1,draw:1},u:{dmg:11},ch:'m'}};
-const W={on:['陰陽玉','攻撃のダメージ+1。攻撃が50%で別の敵にも当たる'],hb:['封魔針の束','封魔針のダメージ+2'],hl:['ミニ八卦炉','火属性攻撃+75%'],br:['魔理沙の箒','毎ターン1枚多く引く'],sk:['星の欠片','星の光のダメージ+3'],ob:['お祓い棒','毎ターン攻撃を1回無効化'],pa:['パチュリーの魔導書','毎ターン手札+1枚。攻撃のダメージ+1'],gu:['グングニル','攻撃が全ての敵に当たる'],ice:['チルノの氷','攻撃時15%で敵を凍結'],yr:['レミリアの槍','20%で3倍ダメージ'],fan:['幽々子の扇','敵の攻撃力-1'],om:['博麗のお守り','最大HP+10'],mu:['魔法の森のキノコ','戦闘開始時、カード1枚を強化']};
+const W={on:['陰陽玉','攻撃のダメージ+1。攻撃が50%で別の敵にも当たる'],hb:['封魔針の束','封魔針のダメージ+2'],hl:['ミニ八卦炉','火属性攻撃+75%'],br:['魔理沙の箒','毎ターン1枚多く引く'],sk:['星の欠片','星の光のダメージ+3'],ob:['お祓い棒','毎ターン最初の攻撃のダメージを半減'],pa:['パチュリーの魔導書','毎ターン手札+1枚。攻撃のダメージ+1'],gu:['グングニル','攻撃が全ての敵に当たる'],ice:['チルノの氷','攻撃時15%で敵を凍結'],yr:['レミリアの槍','20%で3倍ダメージ'],fan:['幽々子の扇','敵の攻撃力-1'],om:['博麗のお守り','最大HP+10'],mu:['魔法の森のキノコ','戦闘開始時、カード1枚を強化']};
 const CH={r:{n:'博麗霊夢',hp:70,w:'on',deck:'bz bz bz bz kk kk dm ms os os',t:'バランス型。戦闘開始時ブロック+8'},m:{n:'霧雨魔理沙',hp:64,w:'hl',deck:'bz bz bz mp sl sl sl kk kk kr',t:'火力型。戦闘開始時にカードを1枚得る'}};
 const E={
 妖精:{hp:20,mv:[['a',5],['a',5],['d',4]]},大妖精:{hp:30,mv:[['a',7],['d',6],['a',7]]},霧の湖の妖精:{hp:25,mv:[['a',3,2],['a',3,2],['d',5]]},
@@ -158,7 +158,7 @@ const ACT=[{n:'博麗神社〜霧の湖',len:8,N:['妖精','大妖精','霧の�
 let G,B;
 const has=id=>G.w.includes(id);
 const cs=o=>{const c=C[o.id],d={...c.d,...(o.up?c.u:{})};const cost=o.up&&c.u.c!==undefined?c.u.c:c.c;delete d.c;return{n:c.n+(o.up?'+':''),cost,d,ch:c.ch||''}};
-const desc=d=>{const s=[];if(d.dmg)s.push(`${d.dmg}ダメージ${d.hits?'×'+d.hits:''}${d.all?'(全体)':''}${d.rnd?'(ランダム)':''}${d.splash?'+他に'+d.splash:''}${d.pierce?'(貫通)':''}`);if(d.blk)s.push(`ブロック+${d.blk}`);if(d.draw)s.push(`${d.draw}枚引く`);if(d.heal)s.push(`HP${d.heal}回復`);if(d.gold)s.push(`お賽銭+${d.gold}`);if(d.evade)s.push('次の攻撃を回避');if(d.add)s.push(`ランダムなカード${d.add}枚を手札へ`);if(d.pw==='atk')s.push(`パワー:攻撃+${d.v}`);if(d.pw==='fire')s.push(`パワー:火属性+${d.v*100}%`);if(d.pw==='tb')s.push(`パワー:毎ターン開始時ブロック+${d.v}`);if(d.pw==='dr')s.push(`パワー:毎ターン${d.v}枚多く引く`);if(d.pw==='rg')s.push(`パワー:毎ターン開始時HP${d.v}回復`);if(d.hs)s.push(`手札1枚につき${d.hs}ダメージ`);if(d.ds)s.push(`捨札1枚につき${d.ds}ダメージ`);if(d.bd)s.push('現在のブロック分のダメージ');if(d.wk)s.push(`${d.wka?'全ての敵':'敵1体'}の攻撃-3(${d.wk}ターン)`);if(d.frz)s.push('敵を凍結');if(d.psn)s.push(`敵に毒${d.psn}`);if(d.en)s.push(`霊力+${d.en}`);if(d.hp)s.push(`HP-${d.hp}`);if(d.nx)s.push('次の攻撃のダメージ2倍');if(d.ref)s.push('手札を全て捨てて5枚引く');if(d.upall)s.push('手札を全て強化(戦闘中)');if(d.cp)s.push(`手札のカードを${d.cp}枚複製`);if(d.pw==='dl')s.push(`パワー:毎ターン敵に${d.v}ダメージ`);if(d.pw==='cr')s.push(`パワー:クリティカル率+${d.v}%`);if(d.pw==='ev')s.push(`パワー:攻撃を${d.v}%で回避`);if(d.pw==='ic')s.push(`パワー:攻撃時の凍結率+${d.v}%`);if(d.cr)s.push(`クリティカル率+${d.cr}%`);if(d.lo)s.push(`敵HP半分以下なら+${d.lo}`);if(d.sa)s.push(`敵の攻撃力-${d.sa}`);if(d.fp&&!d.coin)s.push(`${d.fp}%で凍結`);if(d.fz2)s.push('敵を2ターン凍結');if(d.enl&&!d.coin)s.push(`次のターン霊力-${d.enl}`);if(d.rr)s.push('敵の次の行動をランダムに変更');if(d.iw)s.push('このターン攻撃してきた敵を50%で凍結');if(d.rf)s.push('敵の攻撃を1回跳ね返す');if(d.dn)s.push('次のターン引く枚数-1');if(d.rp&&!d.dd)s.push(`HP${d.rp}%以下なら即死(ボス除く)`);if(d.ex)s.push('消滅');if(d.tw)s.push('戦闘中ランダムな武器を得る');if(d.bm)s.push('以後ブロック獲得-1');if(d.look)s.push(`山札上${d.look}枚から1枚を手札へ`);if(d.dc)s.push('手札1枚を捨てる');if(d.coin)s.push(`コイン 表:${d.gw?'お賽銭+'+d.gw:''}${d.fp?'敵を凍結':''} 裏:${d.hl?'HP-'+d.hl:''}${d.enl?'次のターン霊力-'+d.enl:''}`);if(d.dd)s.push(`引いた時発動:HP${d.rp}%以下の敵(ボス除く)を即死、いなければHP-${d.fh}`);if(d.pw==='fb')s.push(`パワー:火カードを使うたび敵全体に${d.v}ダメージ`);if(d.pw==='fi')s.push(`パワー:凍結中の敵へのダメージ+${d.v}`);if(d.pw==='pd')s.push('パワー:毒5以上の敵を攻撃すると毒が倍');if(d.pw==='sd')s.push(`パワー:星カードを使うたび${d.v}枚引く`);if(d.pw==='bk')s.push(`パワー:ブロック10以上で攻撃力+${d.v}`);if(d.fza)s.push('全ての敵を1ターン凍結');if(d.gz)s.push(`グレイズ+${d.gz}`);if(d.bmb)s.push('ボム+1');if(d.pw==='en')s.push(`パワー:毎ターン霊力+${d.v}、引く枚数-1`);if(d.tc)s.push(`捨札の${TG[d.tc]}カード1枚につき${d.tm}ダメージ`);if(d.gd)s.push(`お賽銭${d.gd}につき1ダメージ`);if(d.fb)s.push(`凍結中の敵に+${d.fb}`);if(d.fz1)s.push('敵1体を1ターン凍結');if(d.pdb)s.push('敵1体の毒を倍にする');if(d.rw)s.push(`HPを${d.rw}ターン前の値まで戻す`);if(d.ls)s.push(`与ダメージの${d.ls*100}%回復`);if(d.up1)s.push('手札1枚をランダムに強化');if(d.hot)s.push(`毎ターン開始HP3回復(${d.hot}ターン)`);if(d.rt)s.push('保持');if(d.sr)s.push(`山札から${TG[d.sr]}カードを1枚手札へ`);if(d.gs)s.push(`お賽銭${d.gs}で${d.gdr}枚引く`);if(d.rcl)s.push('捨札からランダム1枚を手札へ');if(d.nb)s.push('このターン敵の攻撃を全て無効');if(d.dbf)s.push('敵の強化を消す');if(d.cp2)s.push('毒を治す');if(d.pc)s.push(`敵の現HPの${d.pc*100}%を削る(ボス半減)`);if(d.wd)s.push('曜日で効果変化 日:HP5 月:凍結50% 火:火8 水:ブロック8 木:2枚引く 金:霊力+1 土:全体6');if(d.bd2)s.push('手札と捨札を入れ替える');if(d.pq)s.push(`人形ダメージ×${d.pq}を追加`);if(d.cc)s.push(`コンボ数×${d.cc}を追加`);if(d.mo)s.push('夜はダメージ2倍');if(d.su)s.push('昼はダメージ2倍');if(d.bt)s.push('残りは山札の下へ');if(d.cur)s.push('呢い:使用不可');if(d.pw==='sh')s.push(`パワー:敵を倒すたび霊力+${d.v}`);if(d.psa)s.push(`全ての敵に毒${d.psa}`);return s.join('、')};
+const desc=d=>{const s=[];if(d.dmg)s.push(`${d.dmg}ダメージ${d.hits?'×'+d.hits:''}${d.all?'(全体)':''}${d.rnd?'(ランダム)':''}${d.splash?'+他に'+d.splash:''}${d.pierce?'(貫通)':''}`);if(d.blk)s.push(`ブロック+${d.blk}`);if(d.draw)s.push(`${d.draw}枚引く`);if(d.heal)s.push(`HP${d.heal}回復`);if(d.gold)s.push(`お賽銭+${d.gold}`);if(d.evade)s.push('次の攻撃を回避');if(d.add)s.push(`ランダムなカード${d.add}枚を手札へ`);if(d.pw==='atk')s.push(`パワー:攻撃+${d.v}`);if(d.pw==='fire')s.push(`パワー:火属性+${d.v*100}%`);if(d.pw==='tb')s.push(`パワー:毎ターン開始時ブロック+${d.v}`);if(d.pw==='dr')s.push(`パワー:毎ターン${d.v}枚多く引く`);if(d.pw==='rg')s.push(`パワー:毎ターン開始時HP${d.v}回復`);if(d.hs)s.push(`手札1枚につき${d.hs}ダメージ`);if(d.ds)s.push(`捨札1枚につき${d.ds}ダメージ`);if(d.bd)s.push('現在のブロック分のダメージ');if(d.wk)s.push(`${d.wka?'全ての敵':'敵1体'}の攻撃-3(${d.wk}ターン)`);if(d.frz)s.push('敵を凍結');if(d.psn)s.push(`敵に毒${d.psn}`);if(d.en)s.push(`霊力+${d.en}`);if(d.hp)s.push(`HP-${d.hp}`);if(d.nx)s.push('次の攻撃のダメージ2倍');if(d.ref)s.push('手札を全て捨てて5枚引く');if(d.upall)s.push('手札を全て強化(戦闘中)');if(d.cp)s.push(`手札のカードを${d.cp}枚複製`);if(d.pw==='dl')s.push(`パワー:毎ターン敵に${d.v}ダメージ`);if(d.pw==='cr')s.push(`パワー:クリティカル率+${d.v}%`);if(d.pw==='ev')s.push(`パワー:攻撃を${d.v}%で回避`);if(d.pw==='ic')s.push(`パワー:攻撃時の凍結率+${d.v}%`);if(d.cr)s.push(`クリティカル率+${d.cr}%`);if(d.lo)s.push(`敵HP半分以下なら+${d.lo}`);if(d.sa)s.push(`敵の攻撃力-${d.sa}`);if(d.fp&&!d.coin)s.push(`${d.fp}%で凍結`);if(d.fz2)s.push('敵を2ターン凍結');if(d.enl&&!d.coin)s.push(`次のターン霊力-${d.enl}`);if(d.rr)s.push('敵の次の行動をランダムに変更');if(d.iw)s.push('このターン攻撃してきた敵を50%で凍結');if(d.rf)s.push('敵の攻撃を1回跳ね返す');if(d.dn)s.push('次のターン引く枚数-1');if(d.rp&&!d.dd)s.push(`HP${d.rp}%以下なら即死(ボス除く)`);if(d.ex)s.push('消滅');if(d.tw)s.push('戦闘中ランダムな武器を得る');if(d.bm)s.push('以後ブロック獲得-1');if(d.look)s.push(`山札上${d.look}枚から1枚を手札へ`);if(d.dc)s.push('手札1枚を捨てる');if(d.coin)s.push(`コイン 表:${d.gw?'お賽銭+'+d.gw:''}${d.fp?'敵を凍結':''} 裏:${d.hl?'HP-'+d.hl:''}${d.enl?'次のターン霊力-'+d.enl:''}`);if(d.dd)s.push(`引いた時発動:HP${d.rp}%以下の敵(ボス除く)を即死、いなければHP-${d.fh}`);if(d.pw==='fb')s.push(`パワー:火カードを使うたび敵全体に${d.v}ダメージ`);if(d.pw==='fi')s.push(`パワー:凍結中の敵へのダメージ+${d.v}`);if(d.pw==='pd')s.push('パワー:毒5以上の敵を攻撃すると毒が倍');if(d.pw==='sd')s.push(`パワー:星カードを使うたび${d.v}枚引く`);if(d.pw==='bk')s.push(`パワー:ブロック10以上で攻撃力+${d.v}`);if(d.fza)s.push('全ての敵を1ターン凍結');if(d.gz)s.push(`グレイズ+${d.gz}`);if(d.bmb)s.push('ボム+1');if(d.pw==='en')s.push(`パワー:毎ターン霊力+${d.v}、引く枚数-1`);if(d.tc)s.push(`捨札の${TG[d.tc]}カード1枚につき${d.tm}ダメージ`);if(d.gd){const _a=(typeof G!=='undefined'&&G&&G.gold>=0)?`(現在${Math.min(d.gm||999,Math.floor(G.gold/d.gd))})`:'';s.push(`お賽銭${d.gd}につき1ダメージ（上限${d.gm||'なし'}）${_a}`)}if(d.fb)s.push(`凍結中の敵に+${d.fb}`);if(d.fz1)s.push('敵1体を1ターン凍結');if(d.pdb)s.push('敵1体の毒を倍にする');if(d.rw)s.push(`HPを${d.rw}ターン前の値まで戻す`);if(d.ls)s.push(`与ダメージの${d.ls*100}%回復`);if(d.up1)s.push('手札1枚をランダムに強化');if(d.hot)s.push(`毎ターン開始HP3回復(${d.hot}ターン)`);if(d.rt)s.push('保持');if(d.sr)s.push(`山札から${TG[d.sr]}カードを1枚手札へ`);if(d.gs)s.push(`お賽銭${d.gs}で${d.gdr}枚引く`);if(d.rcl)s.push('捨札からランダム1枚を手札へ');if(d.nb)s.push('このターン敵の攻撃を全て無効');if(d.dbf)s.push('敵の強化を消す');if(d.cp2)s.push('毒を治す');if(d.pc)s.push(`敵の現HPの${d.pc*100}%を削る(ボス半減)`);if(d.wd)s.push('曜日で効果変化 日:HP5 月:凍結50% 火:火8 水:ブロック8 木:2枚引く 金:霊力+1 土:全体6');if(d.bd2)s.push('手札と捨札を入れ替える');if(d.pq)s.push(`人形ダメージ×${d.pq}を追加`);if(d.cc)s.push(`コンボ数×${d.cc}を追加`);if(d.bt)s.push('残りは山札の下へ');if(d.cur)s.push('呢い:使用不可');if(d.pw==='sh')s.push(`パワー:敵を倒すたび霊力+${d.v}`);if(d.psa)s.push(`全ての敵に毒${d.psa}`);return s.join('、')};
 const cardEl=(o,extra='',dis='')=>{if(!window.__cxq)cxSeen('c',o.id);const c=cs(o);return`<button class="card ${c.ch}" ${extra} ${dis}><span class="c">${c.cost}霊力</span><span class="n">${c.n}</span><span class="c">${TG[TAG[o.id]]||''}${RA(o.id)==='r'?' ★':RA(o.id)==='u'?' ☆':''}</span><span class="d">${desc(c.d)}</span></button>`};
 const pool=()=>Object.keys(C).filter(k=>(!C[k].ch||C[k].ch===G.ch)&&!C[k].d.cur);
 const wpool=()=>Object.keys(W).filter(k=>!has(k)&&!EXH[k]);
@@ -221,7 +221,7 @@ else if(k==='d')e.blk=v;else e.str+=v;if(e.wk)e.wk--;}
 if(G.hp<=0)return over(false);if(!alive().length)return win();
 alive().forEach(e=>{e.k++;e.i=e.mv[e.k%e.mv.length]});B.log=log.join(' ');turn()}
 const intent=e=>{const[k,v,t=1,x]=e.i;if(k==='a')return`攻撃 ${Math.max(0,v+e.str-(has('fan')?1:0)-(e.wk?3:0))}${t>1?'×'+t:''}${x==='x'?'(貫通)':''}${x==='f'?'(氷結)':''}${x==='p'?'(毒)':''}`;return k==='d'?`防御 ${v}`:`強化 +${v}`};
-function render(){chkSp();$v(head()+`<div class="row es">${B.es.map((e,i)=>`<div class="en ${e===tgt()?'t':''} ${e.hp<=0?'dead':''}" onclick="B.t=${i};render()"><b>${e.n}</b>${AB[e.n]?`<br><small class="log">${AT[AB[e.n]]}</small>`:''}<div class="bar"><i style="width:${Math.max(0,e.hp/e.m*100)}%"></i></div>${Math.max(0,e.hp)}/${e.m}${e.blk?` 防${e.blk}`:''}${e.frz?' 凍':''}${e.p?' 毒'+e.p:''}${e.cd?` <b style="color:#ff6b6b">時間${e.cd}</b>`:''}<div class="it">${e.hp>0?atkName(e)+intent(e):''}</div></div>`).join('')}</div>
+function render(){chkSp();$v(head()+`<div class="row es">${B.es.map((e,i)=>`<div class="en ${e===tgt()?'t':''} ${e.hp<=0?'dead':''}" onclick="B.t=${i};render()"><b>${e.n}</b>${AB[e.n]?`<br><small class="log">${AT[AB[e.n]]}</small>`:''}<div class="bar"><i style="width:${Math.max(0,e.hp/e.m*100)}%"></i></div>${Math.max(0,e.hp)}/${e.m}${e.blk?` 防${e.blk}`:''}${e.frz?' 凍':''}${e.p?' 毒'+e.p:''}${e.cd?` <b style="color:#ff6b6b">時間${e.cd}</b>`:''}<div class="it">${e.hp>0?(AB[e.n]==='rnd'?'？？？（行動不明）':atkName(e)+intent(e)):''}</div></div>`).join('')}</div>
 <div class="log">${B.log}</div>
 <div class="me"><span>霊力 <b style="color:var(--gold)">${B.en}</b>/3　ブロック <b style="color:var(--ice)">${B.blk}</b>${B.psn?`　毒${B.psn}`:''}　グレイズ${B.gz}/3　${B.wx||''}・${B.td||''}${B.evade?'　回避':''}${B.ob?'　祓':''}</span><span class="log">山札${B.draw.length} 捨札${B.disc.length}</span><button onclick="bomb()" ${B.bomb?'':'disabled'}>ボム${B.bomb}</button> ${B.tt==null?'':`<button onclick="tt()" ${B.tt?'':'disabled'}>時操り</button>`} <button class="pri" onclick="endTurn()">ターン終了</button></div>
 ${B.pk?`<p class="log">${B.pk.m==='l'?'手札に加えるカードを選ぶ':'捨てるカードを選ぶ'}</p><div class="row">${(B.pk.m==='l'?B.pk.a:B.hand).map((o,i)=>cardEl(o,`onclick="pickC(${i})"`)).join('')}</div>`:`<div class="row">${B.hand.map((o,i)=>cardEl(o,`onclick="play(${i})"`,B.en<cs(o).cost?'disabled':'')).join('')}</div>`}`)}
@@ -249,7 +249,7 @@ if(ev===0)$v(head()+`<h2>神社の賽銭箱</h2><p>お賽銭を捧げると祝�
 else $v(head()+`<h2>怪しいキノコ</h2><p>道端に見慣れないキノコが生えている。</p><div class="ch"><button onclick="mush()">食べる</button><button onclick="map()">やめておく</button></div>`)}
 function mush(){const r=R(3);if(r===0){heal(15);G.msg='元気が湧いた。HP15回復'}else if(r===1){G.hp=Math.max(1,G.hp-8);G.msg='腹を壊した。HP-8'}else{G.gold+=40;G.msg='お賽銭40を見つけた'}
 $v(head()+`<p>${G.msg}</p><button onclick="map()">進む</button>`)}
-function over(ok){if(!ok&&G.lives>0&&alive().length){G.lives--;G.hp=Math.ceil(G.mhp*.5);B.blk=8;B.psn=0;B.log+=' 残機を失った！HP回復';if(!B.hand.length)return turn();return render()}$v(`<h1>${ok?'異変解決':'力尽きた'}</h1><p>${ok?'八雲紫を退け、幻想郷に平穏が戻った。':`${G.act+1}章 ${G.step}ノードで敗北。`}</p><p class="log">デッキ${G.deck.length}枚 / 武器${G.w.length}個</p><button class="pri" onclick="title()">もう一度</button>`)}
+function over(ok){if(!ok&&G.lives>0&&alive().length){G.lives--;G.hp=Math.ceil(G.mhp*.5);B.blk=8;B.psn=0;B.log+=' 残機を失った！HP回復';if(!B.hand.length)return turn();return render()}OVER=1;$v(`<h1>${ok?'異変解決':'力尽きた'}</h1><p>${ok?'八雲紫を退け、幻想郷に平穏が戻った。':`${G.act+1}章 ${G.step}ノードで敗北。`}</p><p class="log">デッキ${G.deck.length}枚 / 武器${G.w.length}個</p><button class="pri" onclick="title()">もう一度</button>`)}
 const frzTry=(e,p)=>{if(e&&e.hp>0&&!e.fi&&!e.frz&&R(100)<p+(B.wx==='雪'?15:0)){e.frz=1;if(G.ch==='ci')B.blk+=2}};
 const frzSet=(e,n)=>{if(e&&e.hp>0&&!e.fi&&!e.frz){e.frz=n;if(G.ch==='ci')B.blk+=2}};
 function hit(e,v,pierce){if(B.pw.fi&&e.frz)v+=B.pw.fi;let a=0;if(!pierce){a=Math.min(e.blk,v);e.blk-=a;v-=a}B.dd=(B.dd||0)+Math.max(0,Math.min(v,e.hp));B.ok=(B.ok||0)+Math.max(0,v-Math.max(0,e.hp));e.hp-=v;e.h=1;FL.push({i:B.es.indexOf(e),v,a,c:CUR})}
@@ -274,7 +274,7 @@ if(d.sa)alive().forEach(e=>e.str-=d.sa)}
 if(d.blk)B.blk+=Math.max(0,d.blk-(B.pw.bm||0));if(d.heal)heal(d.heal);if(d.gold)G.gold+=d.gold;if(d.evade)B.evade++;
 if(d.bm)B.pw.bm=(B.pw.bm||0)+d.bm;if(d.iw)B.iw=1;if(d.rf)B.rf++;if(d.dn)B.dn+=d.dn;
 if(d.en)B.en+=d.en;if(d.nx)B.nx=2;
-const ex=(d.hs?B.hand.length*d.hs:0)+(d.ds?B.disc.length*d.ds:0)+(d.bd?B.blk:0)+(d.tc?B.disc.filter(o=>TAG[o.id]===d.tc).length*d.tm:0)+(d.gd?Math.floor(G.gold/d.gd):0)+(d.pq?(B.pw.dl||0)*d.pq:0)+(d.cc?(B.ca||0)*d.cc:0);
+const ex=(d.hs?B.hand.length*d.hs:0)+(d.ds?B.disc.length*d.ds:0)+(d.bd?B.blk:0)+(d.tc?B.disc.filter(o=>TAG[o.id]===d.tc).length*d.tm:0)+(d.gd?Math.min(d.gm||999,Math.floor(G.gold/d.gd)):0)+(d.pq?(B.pw.dl||0)*d.pq:0)+(d.cc?(B.ca||0)*d.cc:0);
 if(ex>0&&alive().length){atk=1;hit(tgt(),calc(o.id,{dmg:ex,fire:d.fire}),0)}
 if(atk&&B.nx&&!d.nx)B.nx=0;
 if(atk&&alive().length)frzTry(tgt(),(has('ice')?15:0)+(B.pw.ic||0));
@@ -304,9 +304,9 @@ for(const e of alive()){if(e.hp<=0)continue;if(e.p){e.hp-=e.p;e.p--;if(e.hp<=0)c
 if(e.fi&&!e.frz)e.fi--;
 if(e.frz){e.frz--;if(!e.frz)e.fi=1;log.push(e.n+'は動けない');continue}
 e.blk=0;const[k,v,t=1,x]=e.i;
-if(k==='a')for(let j=0;j<t;j++){const dm=Math.max(0,v+e.str-(has('fan')?1:0)-(e.wk?3:0));
+if(k==='a')for(let j=0;j<t;j++){let dm=Math.max(0,v+e.str-(has('fan')?1:0)-(e.wk?3:0));
 if(B.nb)continue;if(B.rf>0){B.rf--;{const rt=pick(alive());if(rt)hit(rt,dm,0)}log.push('攻撃を跳ね返した');continue}
-if(B.evade>0){B.evade--;gzp();continue}if(B.ob>0){B.ob--;gzp();continue}if(R(100)<(B.pw.ev||0)){gzp();continue}
+if(B.evade>0){B.evade--;gzp();continue}if(B.ob>0){B.ob--;dm=Math.ceil(dm/2)}if(R(100)<(B.pw.ev||0)){gzp();continue}
 let r=dm;if(x!=='x'){const a=Math.min(B.blk,r);B.blk-=a;r-=a}G.hp-=r;B.tk=(B.tk||0)+r;FL.push({p:1,v:r,a:dm-r});if(r<=0&&dm>0)gzp();if(x==='f')B.fz=1;if(x==='p')B.psn+=2;if(B.iw&&R(2))frzTry(e,100)}
 else if(k==='d')e.blk=v;else e.str+=has('ofd')?0:v;
 if(e.wk)e.wk--;if(e.cd){e.cd--;if(!e.cd){tout(e,log);fxQ(()=>fxBn('スペルカード・タイムアウト','#e5333f'),1500)}}abil(e,log)}
@@ -356,7 +356,7 @@ E.幽々子.sp={at:.6,n:'「死蝶『華胥の永眠』」',mv:[['a',9,3,'x'],['
 Object.assign(W,{uch:['天狗の団扇','毎ターン開始時ブロック+3'],rk:['楼観剣','攻撃のダメージ+1'],oni:['鬼の盃','戦闘開始時、攻撃+2・HP-3'],ssb:['賽銭箱','勝利時お賽銭+20'],yak:['永遠亭の薬','勝利時HP+6']});
 Object.assign(C,{gx:{n:'グレイズの極意',c:1,d:{blk:3,gz:3},u:{blk:5}},bc:{n:'ボム補充',c:1,d:{bmb:1,ex:1},u:{c:0}},bs:{n:'ブレイジングスター',c:2,d:{dmg:14,fire:1,pierce:1,hp:3},u:{dmg:19},ch:'m'}});
 TAG.gx='k';TAG.bs='f';UNC.push('gx','bc','bs');
-function gzp(){B.gz++;if(B.gz>=3){B.gz-=3;B.fz-=1}}
+function gzp(){B.gz++;if(B.gz>=3){B.gz-=3;B.fz-=1;try{synUnlock('graze')}catch(e){}}}
 function chkSp(){revive();B.es.forEach(e=>{if(e.hp>0&&e.sp&&!e.spd&&e.hp<=e.m*e.sp.at){e.spd=1;e.mv=e.sp.mv;e.k=0;e.i=e.mv[0];e.blk=0;e.cd=3;fxSp(e);B.log+=` ${e.n}がスペルカード宣言：${e.sp.n}`}})}
 function bomb(){if(!B.bomb||B.pk)return;B.bomb--;alive().forEach(e=>hit(e,8,0));B.nb=1;B.log='ボム！全ての敵に8ダメージ、このターンの敵の攻撃を全て無効化';if(!alive().length)return win();render()}
 function evx(n){const h=head();
@@ -403,7 +403,7 @@ const DIFF=[{n:'Easy',t:'敵HP×1.3 攻撃×1.0',h:1.3,a:1},{n:'Normal',t:'敵HP
 function scale(){const d=DIFF[G.lv==null?1:G.lv],ac=actMul(G.act);const S=mv=>mv.map(m=>m[0]==='a'?[m[0],Math.round(m[1]*d.a*ac),...m.slice(2)]:m[0]==='d'?[m[0],Math.round(m[1]*d.a*ac)]:m);B.es.forEach(e=>{e.hp=e.m=Math.round(e.m*d.h*ac);e.mv=S(e.mv);if(e.sp)e.sp={...e.sp,mv:S(e.sp.mv)};e.i=e.mv[e.k%e.mv.length]})}
 const _start=start;start=function(k){$v(`<h2>難易度</h2><div class="ch">${DIFF.map((d,i)=>`<button onclick="go('${k}',${i})"><b>${d.n}</b><br><span class="log">${d.t}</span></button>`).join('')}</div>`)};
 function go(k,i){_start(k);G.lv=i;if(i===3)G.lives=1;map()}
-const Q={妖精:'ちょっと遊んであげる',大妖精:'えっと…がんばります！',霧の湖の妖精:'ここから先は通さないよ',リグル:'虫の知らせよ',橙:'にゃーん！',ミスティア:'夜雀の歌を聴きなさい',チルノ:'あたいったら最強ね！',ルーミア:'そーなのかー',小悪魔:'パチュリー様の魔はさせません',美鈴:'ここは通しませんよ！',パチュリー:'むきゅー…本を読む魔よ',アリス:'あなたも人形にしてあげる',咲夜:'時間よ止まれ。…あら、もう動いてるの？',レミリア:'運命は私の手の中にあるわ',妖夢:'迷いなき一刀、受けてみなさい',紫:'境界を弄ぶのも悪くないわね',鈴仙:'狂気の瞳を見つめなさい',妹紅:'燃やし尽くしてあげる',幽々子:'あなたも桜の下で眠りなさい'};
+const Q={妖精:'ちょっと遊んであげる',大妖精:'えっと…がんばります！',霧の湖の妖精:'ここから先は通さないよ',リグル:'虫の知らせよ',橙:'にゃーん！',ミスティア:'夜雀の歌を聴きなさい',チルノ:'あたいったら最強ね！',ルーミア:'そーなのかー',小悪魔:'パチュリー様の魔はさせません',美鈴:'ここは通しませんよ！',パチュリー:'今日は喘息の調子が良いわ',アリス:'あなたも人形にしてあげる',咲夜:'お掃除しないとね',レミリア:'運命は私の手の中にあるわ',妖夢:'迷いなき一刀、受けてみなさい',紫:'境界を弄ぶのも悪くないわね',鈴仙:'狂気の瞳を見つめなさい',妹紅:'燃やし尽くしてあげる',幽々子:'あなたも桜の下で眠りなさい'};
 const atkName=e=>{const[k,v,t=1,x]=e.i;return k!=='a'?'':(x==='x'?'レーザー':x==='f'?'氷弾':x==='p'?'毒弾':t>=4?'弾幕':t===3?'ばら撒き弾':t===2?'二連弾':v>=15?'大玉弾':'通常弾')+'・'};
 function bul(L){const c=`hsl(${[...L[0].n].reduce((a,x)=>a+x.charCodeAt(0),0)%360},90%,65%)`,n=Math.min(40,6+L.reduce((a,e)=>a+(e.i[2]||1)*3,0));for(let i=0;i<n;i++)fxEl(`<div class="bu" style="--c:${c};left:${R(100)}%;animation-delay:${R(500)}ms"></div>`,1700)}
 const AN=['紅霧異変','紅魔館の主','春雪・永夜異変'];
@@ -423,7 +423,7 @@ sj:{n:'瀧洒な従者',c:2,d:{pw:'cr',v:15},u:{v:20},ch:'s'},
 ct:{n:'炎の連鎖',c:1,d:{tc:'f',tm:3,fire:1},u:{tm:4}},
 hr2:{n:'星の列',c:1,d:{tc:'s',tm:3},u:{tm:4}},
 ik:{n:'氷の結晶',c:1,d:{tc:'i',tm:3},u:{tm:4}},
-sn:{n:'賽銭投撲',c:1,d:{gd:10},u:{gd:6}},
+sn:{n:'賽銭投撲',c:1,d:{gd:10,gm:15},u:{gd:6,gm:24}},
 hg:{n:'氷の棺',c:2,d:{dmg:6,fb:12,fp:50},u:{dmg:8,fb:16}},
 ep2:{n:'疫病',c:1,d:{pdb:1},u:{c:0}}});
 TG.t='時';TC.t='#cfcfcf';
@@ -447,7 +447,7 @@ W.wt=['懐中時計','時止め・時の賭け・時操りの凍結+1ターン']
 CH.f={n:'フランドール・スカーレット',hp:42,w:'lvw',deck:'bz bz bz mb mb sb kk kk lv gz',t:'高火力・低HP型。狂気：戦闘中攻撃のダメージ+1'};
 Object.assign(C,{fk:{n:'フォーオブアカインド',c:2,d:{cp:2},u:{c:1},ch:'f'},qd:{n:'QED「495年の波紋」',c:3,d:{dmg:8,hits:3,all:1,fire:1},u:{dmg:11},ch:'f'}});
 TAG.qd='f';RARE.push('qd');UNC.push('fk');SPN.qd=['QED「495年の波紋」','#e5333f','rings'];
-C.ek.d={pw:'en',v:1};
+C.ek.d={pw:'en',v:1};Object.assign(C,{dk9:{n:'博麗大結界',c:2,d:{blk:30,ex:1},u:{blk:50}}});TAG.dk9='k';RARE.push('dk9');
 const AB={咲夜:'tm',輝夜:'tm',幽々子:'mh',紫:'gap',八雲紫:'gap',アリス:'sum',レミリア:'bl'},AT={tm:'3行動ごとに時を止める',mh:'行動ごとに最大HP-2',gap:'2行動ごとに次の手札-2',sum:'3行動ごとに人形召喚',bl:'行動ごとにHP4%回復'};
 function abil(e,log){const a=AB[e.n];if(!a||e.hp<=0)return;const n=(e.ac=(e.ac||0)+1);
 if(a==='tm'&&n%3===0){B.fz+=2;log.push(e.n+'は時を止めた！次の霊力-2')}
@@ -528,7 +528,7 @@ ACT[2].El.push('早苗');ACT[3].El.push('霊烏路空','古明地こいし','八
 E.早苗.sp={at:.5,n:'風祝「風神の扇」',mv:[['a',8,4],['a',14],['b',2]]};E.霊烏路空.sp={at:.5,n:'核熱「核融合」',mv:[['a',28,1,'x'],['b',3]]};E.古明地こいし.sp={at:.5,n:'無意識「弾幕のローズ」',mv:[['a',5,5],['a',9,3],['d',8]]};E.八雲藍.sp={at:.5,n:'式神「八雲藍」',mv:[['a',9,4],['b',3],['a',20]]};
 Object.assign(SC,{早苗:['#7bd88f','petals'],霊烏路空:['#ff7b2e','beam'],古明地こいし:['#ff9ecb','rain'],八雲藍:['#e8c468','rings']});
 Object.assign(Q,{早苗:'奇跡を起こしてみせます！',霊烏路空:'うにゅ！核融合の力、見せてあげる',古明地こいし:'あれ、いつの間にいたのかな？',八雲藍:'紫様の前に、まず私が相手だ'});
-Object.assign(AB,{小傘:'cur',早苗:'gap',霊烏路空:'sf',古明地こいし:'rnd'});Object.assign(AT,{cur:'3行動ごとに呢いを押し付ける',sf:'行動ごとに自傷(最大HP5%)',rnd:'行動がランダム'});
+Object.assign(AB,{小傘:'cur',早苗:'gap',霊烏路空:'sf',古明地こいし:'rnd'});Object.assign(AT,{cur:'3行動ごとに呢いを押し付ける',sf:'行動ごとに自傷(最大HP5%)',rnd:'行動がランダム・予告なし'});
 const _e3=evx;evx=function(n){if(n<10)return _e3(n);const h=head();
 if(n===10){$v(h+`<h2>神社のおみくじ</h2><p>運試し。</p><div class="ch"><button onclick="omi()">引く</button><button onclick="map()">やめる</button></div>`);fxBn('神社のおみくじ','#ffb7d5')}
 else if(n===11){$v(h+`<h2>河童の取引</h2><p>交換するカードを選ぶ。ランダムなカードと取り替えてくれる。</p><div class="row">${G.deck.map((c,i)=>cardEl(c,`onclick="G.deck[${i}]={id:pick(pool())};map()"`)).join('')}</div><button onclick="map()">断る</button>`);fxBn('河童の取引','#5ad1d1')}
@@ -638,46 +638,54 @@ const SYN=[
 ['steam','蒸気反応','火と氷が出会うと、何かが起きる…','凍結中の敵に火属性の攻撃を当てると、追加で6ダメージ（パチュリーは2倍）。'],
 ['boom','毒の爆発','毒に炎を近づけると…','毒状態の敵に火属性の攻撃を当てると、毒の2倍のダメージで爆発し、毒が消える。'],
 ['venom','猛毒化','氷と毒の相性は…','毒状態の敵に氷属性のカードを使うと、毒が+3される（パチュリーは+6）。'],
-['combo','コンボドロー','攻撃を途切れさせずに当て続けると…','1ターンに3回攻撃を当てると、カードを1枚引ける。'],
-['yomu','剣気の蓄積','妖夢の戦い方は積み重ね…','妖夢は攻撃を当てるたびに攻撃力+1（最大+8）。戦闘が終わるまで残る。'],
-['vamp','吸血鬼の本能','紅い悪魔は傷を癒やす…','レミリアは与えたダメージの25%を回復する。吸血系のカードと重ねると回復量が伸びる。'],
-['yuyu','死者の宴','幽々子が敵を倒すと…','幽々子は敵を倒すたびHP+3、生き残った敵に6ダメージ。複数の敵がいる戦闘で連鎖する。'],
-['cirno','氷結の加護','チルノの本領は凍結にあり…','チルノは敵を凍結させるとブロック+4。凍結中の敵へのダメージも増える。'],
 ['doll','人形の糸','人形が戦場にいる時、糸を引くと…','人形（毎ターンダメージ）を出した状態で糸系のカードを使うと、人形のダメージ分が追加される。'],
 ['weather','天気の相性','空模様を味方につけると…','晴れは火属性+25%、雨は氷属性+25%（逆の天気では弱まる）。天気は戦闘開始時に決まる。'],
 ['daynight','昼夜の使い分け','お日様とお月様…','日符は昼に、月符は夜に使うとダメージ2倍。時間帯は戦闘開始時に決まる。'],
 ['star','星の恵み','星の力を重ねると手札が回る…','「星カードを使うたびに引く」パワーを出すと、星カードを使い続けて手札を回せる。'],
 ['flame','炎の連鎖','火の力を溜めると…','「火カードを使うたびに敵全体へダメージ」のパワーで、火カードが全体攻撃にもなる。'],
 ['fortress','結界の力','守りがそのまま攻めになる…','ブロックが10以上あると攻撃力が上がるパワーがある。守りを固めてから攻撃する。'],
-['rewind','時の巻き戻し','時間を遡れば傷も消える…','巻き戻し系のカードは、1〜2ターン前のHPまで回復できる。'],
 ['cold','凍結連携','凍った敵は脆い…','凍結中の敵に追加ダメージを与えるカードがある。凍結カードと組み合わせる。'],
-['gold','賽銭の力','お賽銭は武器にもなる…','お賽銭の量に応じてダメージを与えるカードがある。お賽銭は商店だけでなく火力にもなる。'],
-['kill','即死','HPが低い敵には…','敵のHPが一定以下なら即死させるカードがある（ボス除く）。'],
-['exhaust','消滅','切り札は使い捨て…','「消滅」のカードは、使うとその戦闘中は二度と使えない。'],
-['retain','保持','温存しておく手…','「保持」のカードは、ターン終了時に手札へ残る。大技を溜めておける。'],
-['curse','代償の契約','強い力には代価がつきもの…','代償つきの武器は強力だが、HPや手札など何かを犠牲にする。デッキと相談して選ぶ。'],
-['exh','展示品','商店の奥には特別な品が…','商店には時々、高額な「展示品」（特別な武器）が並ぶ。展示品は商店でしか手に入らない。']
+['snow','雪の結晶','雪の日は、氷の力が冴える…','雪の日は凍結が起きやすくなる（+15%）。氷属性のカードや「チルノの氷」で敵を凍らせてみよう。'],
+['sunfire','日輪の火','太陽が空にある日に、日の符を放つと…','晴れの昼に「日符」の火属性カードを使うと、天気と時間帯の両方の補正が重なる。'],
+['graze','かすりの極意','避け続ければ、次の一手が軽くなる…','回避やブロックで攻撃を受け切ると「グレイズ」が溜まり、3回で次のターンの霊力+1。'],
+['inyou','陰陽の結界','陰陽の玉は、結界に呼応する…','「陰陽玉」を持って結界カードを使うと、陰陽玉が反応してランダムな敵に4ダメージ（1ターンに1回）。'],
+['nagare','流れ星','欠片は、星の巡りを呼ぶ…','「星の欠片」を持って星カードを使うと、星屑が降ってカードを1枚引ける（1ターンに1回）。'],
+['kashin','炉心の熱','炉の火は、持ち主も守る…','「ミニ八卦炉」を持って火属性のカードを使うと、熱でブロック+4（1ターンに1回）。'],
+['fuyu','冬の花','氷の力は、他の者にも降り注ぐ…','「チルノの氷」を持って氷属性のカードを使うと、氷の欠片が敵全体に2ダメージ（1ターンに1回）。'],
+['getsuka','月下の刃','夜の闇は、刃を研ぎ澄ます…','夜に、クリティカルを高める武器を持って攻撃すると、追加で3ダメージ（1ターンに1回）。'],
+['kusuri','薬の効き目','薬は、癒やしをさらに深める…','「八意印の薬箱」を持って回復カードを使うと、さらにHP+2。'],
+['dokusen','毒の浸透','毒は、種から芽吹く…','戦闘開始時に毒を仕込む武器を持って毒カードを使うと、敵全体に毒+2（1ターンに1回）。'],
+['toki','時の砂','止まった時の中で、備えを固める…','「懐中時計」を持って時属性のカードを使うと、ブロック+6（1ターンに1回）。'],
+['saisen','賽銭箱の音','賽銭箱は、お賽銭を呼び込む…','「賽銭箱」を持ってお賽銭が増えるカードを使うと、カードを1枚引ける（1ターンに1回）。']
 ];
 function synUnlock(id){const x=cxLoad();if(x.s[id])return;x.s[id]=1;cxSave();const a=SYN.find(v=>v[0]===id);try{fxQ(()=>fxBn('シナジー発見：'+a[1],'#e8c468'),1500)}catch(e){}}
 function synChk(o,h0,pre){const c=cs(o),d=c.d,tg=TAG[o.id],f=d.fire||tg==='f',lg=B.log||'',U=synUnlock,al=B.es.filter(e=>e.hp>0);
-if(lg.includes('蒸気'))U('steam');if(lg.includes('爆発'))U('boom');if(lg.includes('猛毒'))U('venom');if(lg.includes('コンボ'))U('combo');if(lg.includes('即死'))U('kill');
-if(G.ch==='y'&&(B.pw.atk||0)>=2&&(B.ca||0)>=2)U('yomu');
-if(G.ch==='re'&&G.hp>h0&&B.dd>0&&!d.heal&&!d.ls)U('vamp');
-if(G.ch==='yu'&&al.length&&pre.filter(Boolean).length>al.length)U('yuyu');
-if(G.ch==='ci'&&al.some(e=>e.frz>0))U('cirno');
+if(lg.includes('蒸気'))U('steam');if(lg.includes('爆発'))U('boom');if(lg.includes('猛毒'))U('venom');
 if(d.pq&&(B.pw.dl||0)>0)U('doll');
 if(d.dmg&&((f&&B.wx==='晴れ')||(tg==='i'&&B.wx==='雨')))U('weather');
 if((d.mo&&B.td==='夜')||(d.su&&B.td==='昼'))U('daynight');
 if(tg==='s'&&(B.pw.sd||0)>0)U('star');
 if(tg==='f'&&(B.pw.fb||0)>0)U('flame');
 if(d.dmg&&(B.pw.bk||0)>0&&B.blk>=10)U('fortress');
-if(d.rw&&G.hp>h0)U('rewind');
 if(d.fb&&al.some(e=>e.frz>0))U('cold');
-if(d.gd&&G.gold>=100)U('gold');
-if(d.ex)U('exhaust')}
-function cxScan(){if(!G)return;(G.w||[]).forEach(k=>{cxSeen('w',k);if(DGW[k])synUnlock('curse');if(EXH[k])synUnlock('exh')});if(G.sh){cxSeen('w',G.sh.w);cxSeen('w',G.sh.x);if(G.sh.x)synUnlock('exh')}}
+if(B.wx==='雪'&&al.some(e=>e.frz>0)&&(tg==='i'||d.frz||d.fp||has('ice')))U('snow');
+if(d.su&&d.fire&&B.td==='昼'&&B.wx==='晴れ')U('sunfire');
+synFx(o,d,tg,f)}
+function synFx(o,d,tg,f){if(!B||B.pk||!alive().length)return;const tn=(B.hh||[]).length,sx=B.sx||(B.sx={});let ch=0;
+const fx=(id,cond,run,every)=>{if(!cond||!alive().length)return;if(!every&&sx[id]===tn)return;sx[id]=tn;run();synUnlock(id);ch=1};
+fx('inyou',has('on')&&tg==='k',()=>{hit(pick(alive()),4,1);B.log+=' 陰陽玉が反応！'});
+fx('nagare',has('sk')&&tg==='s',()=>{drawN(1);B.log+=' 星屑が降る！1枚ドロー'});
+fx('kashin',has('hl')&&f,()=>{B.blk+=4;B.log+=' 炉の熱！ブロック+4'});
+fx('fuyu',has('ice')&&tg==='i',()=>{alive().forEach(e=>hit(e,2,1));B.log+=' 氷の欠片が舞う！'});
+fx('getsuka',d.dmg&&B.td==='夜'&&(has('gk')||has('xk')||has('gu2')||has('dgE')||has('yr')),()=>{hit(tgt(),3,1);B.log+=' 月下の一閃！'});
+fx('kusuri',has('xs')&&d.heal,()=>{heal(2);B.log+=' 薬が効いた！HP+2'},1);
+fx('dokusen',(has('hrb')||has('xh'))&&tg==='p',()=>{alive().forEach(e=>{e.p=(e.p||0)+2});B.log+=' 毒が染み渡る！'});
+fx('toki',has('wt')&&tg==='t',()=>{B.blk+=6;B.log+=' 時の砂！ブロック+6'});
+fx('saisen',has('ssb')&&d.gold,()=>{drawN(1);B.log+=' 賽銭箱が鳴った！1枚ドロー'});
+if(ch){if(!alive().length)win();else render()}}
+function cxScan(){if(!G)return;(G.w||[]).forEach(k=>{cxSeen('w',k);});if(G.sh){cxSeen('w',G.sh.w);cxSeen('w',G.sh.x);}}
 const _playCX=play;play=function(i){const o=B&&B.hand?B.hand[i]:null,h0=G.hp,pre=B&&B.es?B.es.map(e=>e.hp>0):[];_playCX(i);try{if(o&&B.hand[i]!==o)synChk(o,h0,pre)}catch(e){}};
-const _endCX=endTurn;endTurn=function(){try{if(B.hand.some(o=>cs(o).d.rt))synUnlock('retain')}catch(e){}_endCX()};
+const _endCX=endTurn;endTurn=function(){_endCX()};
 
 let CXS={tab:'c',grp:'*',up:{}};
 const cxGroups=()=>[['*','共通'],...Object.entries(CH).map(([k,c])=>[k,c.n])];
@@ -691,7 +699,7 @@ function cxTotals(){const x=cxLoad(),ac=Object.keys(C).filter(k=>!C[k].d.cur),aw
 function cxCardsHTML(){const x=cxLoad(),ord=k=>({r:0,u:1,c:2})[RA(k)]*100+C[k].c;return cxIds(CXS.grp).sort((a,b)=>ord(a)-ord(b)).map(k=>{window.__cxq=1;try{const h=cardEl({id:k,up:CXS.up[k]?1:0},`onclick="cxUp('${k}')"`);return x.c[k]?h:h.replace('class="card ','class="card nw ')}finally{window.__cxq=0}}).join('')}
 function cxWeaponsHTML(){const x=cxLoad(),gr=k=>EXH[k]?'展示品（商店専用）':DGW[k]?'代償つき':'通常',gs=['通常','代償つき','展示品（商店専用）'];return gs.map(g=>{const ks=Object.keys(W).filter(k=>gr(k)===g);return`<h3 style="margin:14px 0 4px">${g} ${ks.filter(k=>x.w[k]).length}/${ks.length}</h3>`+ks.map(k=>x.w[k]?`<div style="padding:6px 10px;background:var(--pn);border-left:3px solid var(--gold);margin:4px 0"><b>${W[k][0]}</b><br><span class="log">${W[k][1]}</span></div>`:'<div style="padding:6px 10px;background:var(--pn);border-left:3px solid var(--ln);margin:4px 0"><b>？？？</b><br><span class="log">未発見</span></div>').join('')}).join('')}
 const MAN=`<h3>目的</h3><p>4つの章（博麗神社〜霧の湖／魔法の森〜紅魔館／白玉楼〜永遠亭／幻想郷の境界）を進み、各章のボス（ルーミア・レミリア・幽々子・八雲紫）を倒すとクリア。クリア後はエンドレスモードに挑戦できる。</p>
-<h3>戦闘</h3><p>毎ターン霊力3、手札5枚。カードは霊力を消費して使う。ターンを終えると敵が行動し、敵の頭上に次の行動が表示される。ブロックは毎ターン消える。</p>
+<h3>戦闘</h3><p>毎ターン霊力3、手札5枚。カードは霊力を消費して使う。ターンを終えると敵が行動し、敵の頭上に次の行動が表示される。ブロックは毎ターン消える。1ターンに3回攻撃を当てるとカードを1枚引ける（コンボ）。</p>
 <h3>カード</h3><p>☆はアンコモン、★はレア。火・氷・毒・星・結界・時の属性があり、組み合わせると反応する。「消滅」は戦闘中1回だけ、「保持」はターン終了後も手札に残る。キャラ専用カードは、そのキャラでしか手に入らない。</p>
 <h3>マップ</h3><p>章ごとに枝分かれする地図がある。光っている地点から次の地点を選び、一本道になることもある。戦・強（エリート）・宝・休・店・？がある。？は戦闘・商店・宝箱になることもあり、イベントが続くほど戦闘になりやすい。エリートは強いが武器などの報酬が良く、序盤の階層には出ない。通常戦闘に勝つとHPが少し回復する。</p>
 <h3>休憩所</h3><p>HP回復、カードの強化、カードの削除から1つを選ぶ。エンドレスでは回復量が下がる（5〜8章は20%、9章以降は10%）。</p>
@@ -789,5 +797,9 @@ function evNew(n){const h=head();if(n===7)$v(h+`<h2>妖怪の待ち伏せ</h2><p
 else $v(h+`<h2>肝試しの誘い</h2><p>魔理沙が肝試しに誘ってくる。奥には強い妖怪がいるらしい。</p><div class="ch"><button onclick="fight(pick(ACT[G.act].El),1)">挑む（エリート戦）</button><button onclick="map()">断る</button></div>`)}
 EV[7]=['#e5333f','rings','妖怪の待ち伏せ'];EV[8]=['#9b7ede','rain','肝試しの誘い'];
 const _evx3=evx;evx=function(n){if(n===7||n===8){evNew(n);const v=EV[n];fxRun(v[1],v[0]);fxBn(v[2],v[0]);return}_evx3(n)};
+let OVER=0;
+const _renderO=render;render=function(){if(OVER)return;_renderO()};
+const _winO=win;win=function(){if(OVER)return;_winO()};
+const _titleO=title;title=function(){OVER=0;_titleO()};
 title();
 </script></body></html>
