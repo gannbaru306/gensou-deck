@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>幻想デッキ録</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#17132b;--pn:#251e44;--ink:#efe9ff;--dim:#a79bd0;--red:#d1343f;--gold:#e8c468;--ice:#7fc8e8;--ln:#4a3f7a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",serif;min-height:100vh}
+#app{max-width:860px;margin:0 auto;padding:12px}
+h1{font-size:34px;font-weight:900;margin:24px 0 4px;letter-spacing:.2em}
+h2{font-size:20px;margin:12px 0}
+button{font:inherit;color:var(--ink);background:var(--pn);border:1px solid var(--ln);padding:8px 14px;cursor:pointer;border-radius:3px}
+button:hover:not(:disabled){border-color:var(--gold)}button:disabled{opacity:.4;cursor:default}
+button.pri{background:var(--red);border-color:var(--red);font-weight:900}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.hd{display:flex;flex-wrap:wrap;gap:6px 16px;padding:8px 10px;background:var(--pn);border-left:4px solid var(--red);margin-bottom:12px;font-size:14px}
+.hd b{color:var(--gold)}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+.es{justify-content:center}
+.en{width:150px;padding:10px;background:var(--pn);border:2px solid var(--ln);text-align:center;cursor:pointer}
+.en.t{border-color:var(--gold)}.en.dead{opacity:.2;pointer-events:none}
+.bar{height:8px;background:#0006;margin:4px 0}.bar i{display:block;height:100%;background:var(--red)}
+.it{color:var(--gold);font-weight:900}
+.card{width:108px;min-height:140px;padding:8px;background:var(--pn);border:1px solid var(--ln);border-top:4px solid var(--dim);text-align:left;display:flex;flex-direction:column;gap:4px}
+.card.r{border-top-color:var(--red)}.card.m{border-top-color:var(--gold)}
+.card .c{font-size:12px;color:var(--gold)}.card .n{font-weight:900;font-size:14px}.card .d{font-size:12px;color:var(--dim)}
+.card:disabled{opacity:.35}
+.card.nw{opacity:.6}
+.mpa circle:nth-child(2){animation:mpp 1.1s infinite}@keyframes mpp{50%{stroke-width:7}}
+.mpa{cursor:pointer}
+.jp,.jt,.rx{transform:translate(-50%,-50%)}
+.jp{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c)}
+.jt{font-weight:900;white-space:nowrap;color:#fff;text-shadow:0 0 8px var(--c),0 0 3px #000,0 0 3px #000;letter-spacing:.06em}
+.rx{width:30px;height:30px;border:4px solid var(--c);border-radius:50%;box-shadow:0 0 14px var(--c)}
+.co{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff7b8 15%,#f2c230 60%,#a77a00);box-shadow:0 0 6px #ffd54a}
+.cf{border:2px solid var(--c);border-radius:8px;background:#ffe06622;box-shadow:0 0 14px var(--c)}
+.cbx{right:4%;top:55%;font-size:20px;font-weight:900;text-shadow:0 0 8px #000,0 0 4px #000;letter-spacing:.05em}.cbx b{font-size:34px}
+.vg{inset:0;background:radial-gradient(ellipse at center,#0000 50%,#e5333fbb);animation:fo .4s forwards}
+.en.hf{animation:hf .22s}@keyframes hf{0%{filter:brightness(3)}30%{transform:translateX(-5px)}60%{transform:translateX(4px)}100%{filter:none}}
+.me.bf{animation:bf .5s}@keyframes bf{0%{box-shadow:0 0 0 0 #5aa9ff}40%{box-shadow:0 0 24px 6px #5aa9ff}100%{box-shadow:0 0 0 0 #5aa9ff00}}
+.card.cin{animation:cin .28s ease-out backwards}@keyframes cin{0%{transform:translateY(26px) scale(.8);opacity:0}100%{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.en.hf,.me.bf,.card.cin{animation:none}}
+.me{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin:14px 0}
+.log{color:var(--dim);font-size:13px;min-height:20px}
+.w{display:inline-block;border-bottom:1px dotted var(--dim);margin-right:8px;cursor:help}
+.ch{display:flex;gap:12px;flex-wrap:wrap}.ch button{flex:1;min-width:200px;padding:16px;text-align:left}
+#fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}#fx>*{position:absolute}
+.bn{left:0;right:0;top:36%;padding:14px 20px;font-size:clamp(18px,5vw,28px);font-weight:900;letter-spacing:.1em;text-align:center;color:#fff;background:linear-gradient(90deg,#0000,var(--c) 15%,var(--c) 85%,#0000);text-shadow:0 0 10px #000;animation:bn 1.4s ease-out forwards}
+@keyframes bn{0%{transform:translateX(100%);opacity:0}15%{transform:none;opacity:1}80%{opacity:1}100%{transform:translateX(-15%);opacity:0}}
+.bm{left:-10%;top:45%;height:60px;width:120%;background:var(--c);box-shadow:0 0 30px 8px var(--c);transform-origin:left;animation:bm .9s ease-out forwards}
+@keyframes bm{0%{transform:scaleX(0);opacity:1}30%{transform:scaleX(1)}100%{transform:scaleX(1) scaleY(0);opacity:0}}
+.sl{left:-20%;top:50%;width:140%;height:6px;background:#fff;box-shadow:0 0 30px 10px var(--c);transform:rotate(-25deg) scaleX(0);animation:sl .6s ease-out forwards}
+@keyframes sl{40%{transform:rotate(-25deg) scaleX(1)}100%{transform:rotate(-25deg) scaleX(1);opacity:0}}
+.fz{inset:0;box-shadow:inset 0 0 120px 40px var(--c);background:#7fc8e833;animation:fo 1.2s forwards}
+.fo{inset:0;background:var(--c);animation:fo .5s forwards}@keyframes fo{0%{opacity:0}30%{opacity:.2}100%{opacity:0}}
+.rg{left:50%;top:50%;width:20px;height:20px;margin:-10px;border:4px solid var(--c);border-radius:50%;animation:rg 1s ease-out forwards}@keyframes rg{100%{transform:scale(40);opacity:0}}
+.pt{top:-20px;width:10px;height:14px;border-radius:50% 0;background:var(--c);animation:pt 1.6s linear forwards}.rn{top:-60px;width:3px;height:50px;background:var(--c);box-shadow:0 0 8px var(--c);animation:pt .7s linear forwards}
+@keyframes pt{100%{transform:translateY(115vh) rotate(360deg);opacity:.3}}
+.dk{inset:0;background:#000;animation:dk 1.4s forwards}@keyframes dk{0%{opacity:0}35%{opacity:.55}100%{opacity:0}}
+.fd{inset:0;background:#000;animation:fd .45s forwards}@keyframes fd{0%{opacity:.6}100%{opacity:0}}
+#app.sk{animation:sk .4s}@keyframes sk{20%{transform:translate(-8px,3px)}40%{transform:translate(8px,-3px)}60%{transform:translate(-5px,2px)}}
+body.gs{filter:grayscale(1) contrast(1.2)}
+.dm{font-weight:900;font-size:24px;text-shadow:0 0 4px #000,0 0 2px #000;animation:dm 1s ease-out forwards}@keyframes dm{0%{transform:translateY(0) scale(.6);opacity:0}15%{transform:translateY(-6px) scale(1.2);opacity:1}100%{transform:translateY(-38px);opacity:0}}
+.bu{top:-14px;width:12px;height:12px;border-radius:50%;background:radial-gradient(#fff 25%,var(--c));box-shadow:0 0 8px var(--c);animation:pt 1.1s linear forwards}
+</style></head><body><div id="app"></div>
+<script>
+const $=s=>document.querySelector(s),R=n=>Math.floor(Math.random()*n),pick=a=>a[R(a.length)];
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=R(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+// ---- データ ----
+const C={
+bz:{n:'封魔針',c:1,d:{dmg:3,draw:1},u:{dmg:4}},
+kk:{n:'結界',c:1,d:{blk:5},u:{blk:8}},
+sh:{n:'集中',c:1,d:{draw:2},u:{draw:3}},
+gz:{n:'グレイズ',c:1,d:{evade:1,draw:1},u:{c:0}},
+os:{n:'お賽銭',c:0,d:{gold:15},u:{gold:25}},
+dm:{n:'弾幕の雨',c:2,d:{dmg:4,hits:3,rnd:1},u:{dmg:5}},
+ms:{n:'夢想封印',c:2,d:{dmg:8,splash:4},u:{dmg:10,splash:6},ch:'r'},
+hk:{n:'博麗の結界',c:2,d:{blk:8,evade:1},u:{blk:12},ch:'r'},
+gi:{n:'幻想郷の祈り',c:1,d:{heal:6},u:{heal:9},ch:'r'},
+yy:{n:'陰陽玉の加護',c:2,d:{pw:'atk',v:2},u:{v:3},ch:'r'},
+mp:{n:'マスタースパーク',c:3,d:{dmg:18,all:1,fire:1},u:{dmg:24},ch:'m'},
+sl:{n:'星の光',c:1,d:{dmg:5,fire:1},u:{dmg:7},ch:'m'},
+hs:{n:'ほうき星',c:2,d:{dmg:7,pierce:1,fire:1},u:{dmg:10},ch:'m'},
+kr:{n:'借り物',c:0,d:{add:1},u:{add:2},ch:'m'},
+hf:{n:'八卦炉の火',c:2,d:{pw:'fire',v:.5},u:{v:.75},ch:'m'},
+rg:{n:'霊撃',c:1,d:{dmg:4,all:1},u:{dmg:6}},
+wk:{n:'呪符',c:1,d:{wk:2},u:{wk:3}},
+sb:{n:'スターボウブレイク',c:1,d:{dmg:1,hits:7,rnd:1},u:{hits:9}},
+kd:{n:'カタディオプトリック',c:3,d:{dmg:10,all:1,pierce:1,wk:1,wka:1},u:{dmg:14}},
+lv:{n:'レーヴァテイン',c:3,d:{dmg:24,fire:1,enl:1},u:{dmg:32}},
+iq:{n:'アイシクルフォール',c:1,d:{dmg:3,hits:3},u:{dmg:4}},
+pf:{n:'パーフェクトフリーズ',c:2,d:{dmg:6,fp:50},u:{dmg:8,fp:65}},
+db:{n:'死の蝶',c:3,d:{dmg:14,lo:12},u:{dmg:18,lo:14}},
+sz:{n:'桜の花びら',c:2,d:{dmg:7,all:1,sa:1},u:{dmg:9,sa:2}},
+sg:{n:'隙間の手',c:1,d:{rr:1,draw:1},u:{c:0}},
+gn:{n:'グングニル',c:2,d:{dmg:12,pierce:1},u:{dmg:16}},
+kn:{n:'ナイフの舞',c:1,d:{dmg:4,hits:2,cr:15},u:{dmg:5}},
+mh:{n:'星の海',c:2,d:{dmg:2,hits:6,rnd:1,fire:1},u:{hits:8},ch:'m'},
+ab:{n:'弾幕の嵐',c:3,d:{dmg:4,hits:3,all:1,draw:2},u:{dmg:5}},
+rn:{n:'陰陽玉の連撃',c:2,d:{dmg:5,hits:2,splash:3},u:{dmg:6,splash:4},ch:'r'},
+ha:{n:'封魔針の雨',c:1,d:{dmg:2,hits:4},u:{dmg:3},ch:'r'},
+iw:{n:'氷の壁',c:1,d:{blk:6,iw:1},u:{blk:8}},
+tk:{n:'時止めの結界',c:2,d:{blk:8,wk:1,wka:1},u:{blk:11}},
+zk:{n:'桜の結界',c:1,d:{blk:5,heal:3},u:{blk:7,heal:4}},
+un:{n:'運命の結界',c:1,d:{blk:4,evade:1},u:{blk:6}},
+sm:{n:'隙間の結界',c:2,d:{blk:8,rf:1},u:{blk:11}},
+mn:{n:'鉄壁の門番',c:2,d:{blk:15,dn:1},u:{blk:19}},
+ar:{n:'人形遣い',c:2,d:{pw:'dl',v:5},u:{v:6}},
+kz:{n:'死神の鎌',c:2,d:{dmg:6,rp:50},u:{dmg:8,rp:60}},
+tg:{n:'天狗の風',c:1,d:{draw:2,evade:1,ex:1},u:{ex:0}},
+kw:{n:'河童の発明',c:1,d:{tw:1,ex:1},u:{c:0}},
+oc:{n:'鬼の力',c:1,d:{pw:'atk',v:2,bm:1},u:{v:3}},
+ho:{n:'星見',c:1,d:{look:3},u:{look:5}},
+pb:{n:'魔法の本',c:1,d:{draw:4,enl:1},u:{draw:5}},
+tu:{n:'月見',c:0,d:{heal:4,dc:1},u:{heal:6}},
+ih:{n:'氷の心',c:2,d:{pw:'ic',v:10},u:{v:15}},
+sy:{n:'桜の心',c:2,d:{pw:'rg',v:2},u:{v:3}},
+fu:{n:'運命の心',c:2,d:{pw:'cr',v:10},u:{v:15}},
+sx:{n:'隙間の心',c:2,d:{pw:'ev',v:10},u:{v:15}},
+pk:{n:'魔法の心',c:2,d:{pw:'dr',v:1},u:{c:1}},
+ub:{n:'運命の賭け',c:0,d:{coin:1,gw:50,hl:10},u:{gw:70,hl:8}},
+sd:{n:'死の賭け',c:1,d:{dd:1,rp:50,fh:8},u:{fh:4}},
+ig:{n:'氷の賭け',c:1,d:{coin:1,fp:100,enl:1},u:{c:0}},
+tm:{n:'時の賭け',c:2,d:{fz2:1,enl:3},u:{c:1}},
+ob:{n:'鬼の賭け',c:1,d:{pw:'atk',v:4,hp:5},u:{v:5}},
+pn:{n:'毒の鱗粉',c:1,d:{psn:4},u:{psn:6}},
+pi:{n:'パワーアイテム',c:0,d:{en:1,hp:3},u:{hp:1}},
+sc:{n:'スペルカード宣言',c:2,d:{ref:1},u:{c:1}},
+cb:{n:'反撃の札',c:1,d:{bd:1},u:{blk:3}},
+ts:{n:'溜め撃ち',c:1,d:{nx:1},u:{c:0}},
+kp:{n:'結界の維持',c:2,d:{pw:'tb',v:3},u:{v:4}},
+
+ky:{n:'禁断の契約',c:1,d:{hp:4,draw:3},u:{hp:3,draw:4}},
+ym:{n:'夢想天生',c:3,d:{dmg:10,all:1,blk:10},u:{dmg:14,blk:14},ch:'r'},
+fj:{n:'封魔陣',c:1,d:{wk:2,wka:1},u:{wk:3},ch:'r'},
+
+oa:{n:'御札の嵐',c:2,d:{ds:1},u:{ds:2},ch:'r'},
+mm:{n:'マジックミサイル',c:1,d:{hs:2,fire:1},u:{hs:3},ch:'m'},
+ml:{n:'魔法の研究',c:2,d:{upall:1},u:{c:1},ch:'m'},
+mb:{n:'無茶な魔力',c:0,d:{dmg:8,fire:1,hp:3},u:{dmg:11},ch:'m'},
+fc:{n:'複製魔法',c:1,d:{cp:1},u:{cp:2},ch:'m'},
+il:{n:'イリュージョンレーザー',c:2,d:{dmg:8,all:1,fire:1,draw:1},u:{dmg:11},ch:'m'}};
+const W={on:['陰陽玉','攻撃のダメージ+1。攻撃が50%で別の敵にも当たる'],hb:['封魔針の束','封魔針のダメージ+2'],hl:['ミニ八卦炉','火属性攻撃+75%'],br:['魔理沙の箒','毎ターン1枚多く引く'],sk:['星の欠片','星の光のダメージ+3'],ob:['お祓い棒','毎ターン攻撃を1回無効化'],pa:['パチュリーの魔導書','毎ターン手札+1枚。攻撃のダメージ+1'],gu:['グングニル','攻撃が全ての敵に当たる'],ice:['チルノの氷','攻撃時15%で敵を凍結'],yr:['レミリアの槍','20%で3倍ダメージ'],fan:['幽々子の扇','敵の攻撃力-1'],om:['博麗のお守り','最大HP+10'],mu:['魔法の森のキノコ','戦闘開始時、カード1枚を強化']};
+const CH={r:{n:'博麗霊夢',hp:70,w:'on',deck:'bz bz bz bz kk kk dm ms os os',t:'バランス型。戦闘開始時ブロック+8'},m:{n:'霧雨魔理沙',hp:64,w:'hl',deck:'bz bz bz mp sl sl sl kk kk kr',t:'火力型。戦闘開始時にカードを1枚得る'}};
+const E={
+妖精:{hp:20,mv:[['a',5],['a',5],['d',4]]},大妖精:{hp:30,mv:[['a',7],['d',6],['a',7]]},霧の湖の妖精:{hp:25,mv:[['a',3,2],['a',3,2],['d',5]]},
+チルノ:{hp:45,mv:[['a',8],['a',6,1,'f'],['d',8]]},ルーミア:{hp:70,mv:[['a',9],['b',2],['a',5,3],['d',10]]},
+森のキノコ:{hp:30,mv:[['a',6,1,'p'],['a',5]]},小悪魔:{hp:35,mv:[['a',8],['d',6]]},美鈴:{hp:55,mv:[['a',10],['d',10],['a',7,2]]},
+パチュリー:{hp:50,mv:[['a',9,1,'p'],['b',2],['a',12]]},レミリア:{hp:90,mv:[['a',12],['a',6,3],['b',3],['a',16]]},
+幽霊:{hp:40,mv:[['a',9,1,'x'],['a',9,1,'x'],['b',1]]},妖夢:{hp:65,mv:[['a',8,2],['d',8],['a',14]]},紫:{hp:70,mv:[['a',10],['b',3],['a',6,2,'f'],['d',10]]},
+幽々子:{hp:120,mv:[['a',14],['a',7,3],['b',3],['a',20,1,'x']]}};
+const ACT=[{n:'博麗神社〜霧の湖',len:8,N:['妖精','大妖精','霧の湖の妖精'],El:['チルノ'],B:'ルーミア'},
+{n:'魔法の森〜紅魔館',len:9,N:['森のキノコ','小悪魔'],El:['美鈴','パチュリー'],B:'レミリア'},
+{n:'白玉楼〜永遠亭',len:10,N:['幽霊','幽霊'],El:['妖夢','紫'],B:'幽々子'}];
+// ---- 共通 ----
+let G,B;
+const has=id=>G.w.includes(id);
+const cs=o=>{const c=C[o.id],d={...c.d,...(o.up?c.u:{})};const cost=o.up&&c.u.c!==undefined?c.u.c:c.c;delete d.c;return{n:c.n+(o.up?'+':''),cost,d,ch:c.ch||''}};
+const desc=d=>{const s=[];if(d.dmg)s.push(`${d.dmg}ダメージ${d.hits?'×'+d.hits:''}${d.all?'(全体)':''}${d.rnd?'(ランダム)':''}${d.splash?'+他に'+d.splash:''}${d.pierce?'(貫通)':''}`);if(d.blk)s.push(`ブロック+${d.blk}`);if(d.draw)s.push(`${d.draw}枚引く`);if(d.heal)s.push(`HP${d.heal}回復`);if(d.gold)s.push(`お賽銭+${d.gold}`);if(d.evade)s.push('次の攻撃を回避');if(d.add)s.push(`ランダムなカード${d.add}枚を手札へ`);if(d.pw==='atk')s.push(`パワー:攻撃+${d.v}`);if(d.pw==='fire')s.push(`パワー:火属性+${d.v*100}%`);if(d.pw==='tb')s.push(`パワー:毎ターン開始時ブロック+${d.v}`);if(d.pw==='dr')s.push(`パワー:毎ターン${d.v}枚多く引く`);if(d.pw==='rg')s.push(`パワー:毎ターン開始時HP${d.v}回復`);if(d.hs)s.push(`手札1枚につき${d.hs}ダメージ`);if(d.ds)s.push(`捨札1枚につき${d.ds}ダメージ`);if(d.bd)s.push('現在のブロック分のダメージ');if(d.wk)s.push(`${d.wka?'全ての敵':'敵1体'}の攻撃-3(${d.wk}ターン)`);if(d.frz)s.push('敵を凍結');if(d.psn)s.push(`敵に毒${d.psn}`);if(d.en)s.push(`霊力+${d.en}`);if(d.hp)s.push(`HP-${d.hp}`);if(d.nx)s.push('次の攻撃のダメージ2倍');if(d.ref)s.push('手札を全て捨てて5枚引く');if(d.upall)s.push('手札を全て強化(戦闘中)');if(d.cp)s.push(`手札のカードを${d.cp}枚複製`);if(d.pw==='dl')s.push(`パワー:毎ターン敵に${d.v}ダメージ`);if(d.pw==='cr')s.push(`パワー:クリティカル率+${d.v}%`);if(d.pw==='ev')s.push(`パワー:攻撃を${d.v}%で回避`);if(d.pw==='ic')s.push(`パワー:攻撃時の凍結率+${d.v}%`);if(d.cr)s.push(`クリティカル率+${d.cr}%`);if(d.lo)s.push(`敵HP半分以下なら+${d.lo}`);if(d.sa)s.push(`敵の攻撃力-${d.sa}`);if(d.fp&&!d.coin)s.push(`${d.fp}%で凍結`);if(d.fz2)s.push('敵を2ターン凍結');if(d.enl&&!d.coin)s.push(`次のターン霊力-${d.enl}`);if(d.rr)s.push('敵の次の行動をランダムに変更');if(d.iw)s.push('このターン攻撃してきた敵を50%で凍結');if(d.rf)s.push('敵の攻撃を1回跳ね返す');if(d.dn)s.push('次のターン引く枚数-1');if(d.rp&&!d.dd)s.push(`HP${d.rp}%以下なら即死(ボス除く)`);if(d.ex)s.push('消滅');if(d.tw)s.push('戦闘中ランダムな武器を得る');if(d.bm)s.push('以後ブロック獲得-1');if(d.look)s.push(`山札上${d.look}枚から1枚を手札へ`);if(d.dc)s.push('手札1枚を捨てる');if(d.coin)s.push(`コイン 表:${d.gw?'お賽銭+'+d.gw:''}${d.fp?'敵を凍結':''} 裏:${d.hl?'HP-'+d.hl:''}${d.enl?'次のターン霊力-'+d.enl:''}`);if(d.dd)s.push(`引いた時発動:HP${d.rp}%以下の敵(ボス除く)を即死、いなければHP-${d.fh}`);if(d.pw==='fb')s.push(`パワー:火カードを使うたび敵全体に${d.v}ダメージ`);if(d.pw==='fi')s.push(`パワー:凍結中の敵へのダメージ+${d.v}`);if(d.pw==='pd')s.push('パワー:毒5以上の敵を攻撃すると毒が倍');if(d.pw==='sd')s.push(`パワー:星カードを使うたび${d.v}枚引く`);if(d.pw==='bk')s.push(`パワー:ブロック10以上で攻撃力+${d.v}`);if(d.fza)s.push('全ての敵を1ターン凍結');if(d.gz)s.push(`グレイズ+${d.gz}`);if(d.bmb)s.push('ボム+1');if(d.pw==='en')s.push(`パワー:毎ターン霊力+${d.v}、引く枚数-1`);if(d.tc)s.push(`捨札の${TG[d.tc]}カード1枚につき${d.tm}ダメージ`);if(d.gd)s.push(`お賽銭${d.gd}につき1ダメージ`);if(d.fb)s.push(`凍結中の敵に+${d.fb}`);if(d.fz1)s.push('敵1体を1ターン凍結');if(d.pdb)s.push('敵1体の毒を倍にする');if(d.rw)s.push(`HPを${d.rw}ターン前の値まで戻す`);if(d.ls)s.push(`与ダメージの${d.ls*100}%回復`);if(d.up1)s.push('手札1枚をランダムに強化');if(d.hot)s.push(`毎ターン開始HP3回復(${d.hot}ターン)`);if(d.rt)s.push('保持');if(d.sr)s.push(`山札から${TG[d.sr]}カードを1枚手札へ`);if(d.gs)s.push(`お賽銭${d.gs}で${d.gdr}枚引く`);if(d.rcl)s.push('捨札からランダム1枚を手札へ');if(d.nb)s.push('このターン敵の攻撃を全て無効');if(d.dbf)s.push('敵の強化を消す');if(d.cp2)s.push('毒を治す');if(d.pc)s.push(`敵の現HPの${d.pc*100}%を削る(ボス半減)`);if(d.wd)s.push('曜日で効果変化 日:HP5 月:凍結50% 火:火8 水:ブロック8 木:2枚引く 金:霊力+1 土:全体6');if(d.bd2)s.push('手札と捨札を入れ替える');if(d.pq)s.push(`人形ダメージ×${d.pq}を追加`);if(d.cc)s.push(`コンボ数×${d.cc}を追加`);if(d.mo)s.push('夜はダメージ2倍');if(d.su)s.push('昼はダメージ2倍');if(d.bt)s.push('残りは山札の下へ');if(d.cur)s.push('呢い:使用不可');if(d.pw==='sh')s.push(`パワー:敵を倒すたび霊力+${d.v}`);if(d.psa)s.push(`全ての敵に毒${d.psa}`);return s.join('、')};
+const cardEl=(o,extra='',dis='')=>{if(!window.__cxq)cxSeen('c',o.id);const c=cs(o);return`<button class="card ${c.ch}" ${extra} ${dis}><span class="c">${c.cost}霊力</span><span class="n">${c.n}</span><span class="c">${TG[TAG[o.id]]||''}${RA(o.id)==='r'?' ★':RA(o.id)==='u'?' ☆':''}</span><span class="d">${desc(c.d)}</span></button>`};
+const pool=()=>Object.keys(C).filter(k=>(!C[k].ch||C[k].ch===G.ch)&&!C[k].d.cur);
+const wpool=()=>Object.keys(W).filter(k=>!has(k)&&!EXH[k]);
+const $v=h=>{$('#app').innerHTML=h;scrollTo(0,0)};
+const head=()=>{if(G.gold>999)G.gold=999;try{cxScan()}catch(e){}return `<div class="hd"><span>${CH[G.ch].n}</span><span>HP <b>${G.hp}/${G.mhp}</b></span><span>お賽銭 <b>${G.gold}</b>/999</span><span>${G.act+1}章 ${G.step}/${ACT[G.act].len}</span><button onclick="deckV()">デッキ${G.deck.length}枚</button><button onclick="cxOpen('c')">図鑑</button><button onclick="cxOpen('m')">遊び方</button><span>残機 <b>${'★'.repeat(G.lives)}</b></span><div style="width:100%"><span class="log">武器${G.w.length}個　</span>${G.w.map(k=>`<span class="w" title="${W[k][1]}">${W[k][0]}</span>`).join('')}</div></div>`};
+const heal=n=>G.hp=Math.min(G.mhp,G.hp+n);
+// ---- 開始 ----
+function title(){$v(`<h1>幻想デッキ録</h1><p class="log">東方 × デッキ構築ローグライク。4つの章を抜け、八雲紫を倒せ。</p><div class="ch">${Object.entries(CH).map(([k,c])=>`<button onclick="start('${k}')"><b>${c.n}</b><br>HP${c.hp} / ${W[c.w][0]}<br><span class="log">${c.t}</span></button>`).join('')}</div>`)}
+function start(k){const c=CH[k];G={ch:k,hp:c.hp,mhp:c.hp,gold:50,deck:c.deck.split(' ').map(id=>({id})),w:[c.w],act:0,step:0,lives:2};map()}
+// ---- マップ ----
+const NT={b:'戦闘',e:'エリート',c:'宝箱',r:'休憩所',s:'商店',v:'イベント'};
+function map(){const a=ACT[G.act];if(G.step>=a.len){return $v(head()+`<h2>${a.n} ボス</h2><button class="pri" onclick="fight('${a.B}',3)">${a.B}に挑む</button>`)}
+if(!G.mp||G.mp.a!==G.act||!G.mp.rows||G.mp.rows.length!==a.len)G.mp={a:G.act,rows:mpGen(),pos:null,path:[]};
+mpView()}
+function node(k){G.step++;const a=ACT[G.act];
+if(k==='b')fight(pick(a.N),0);else if(k==='e')fight(pick(a.El),1);else if(k==='c')chest();else if(k==='r')rest();else if(k==='s')shop();else evq()}
+// ---- 戦闘 ----
+function fight(name,kind){const names=[name];if(!kind&&R(2)&&name!=='幽霊')names.push(pick(ACT[G.act].N));if(kind===0&&names.length===1&&G.step<3)names.length=1;
+B={kind,es:names.map(n=>{const d=E[n],k=R(d.mv.length);return{n,hp:d.hp,m:d.hp,mv:d.mv,k,i:d.mv[k],blk:0,str:0,frz:0,fi:0,bs:kind===3,sp:d.sp}}),hand:[],draw:shuf(G.deck.map(o=>({...o}))),disc:[],en:3,blk:G.ch==='r'?8:0,evade:0,ob:has('ob')?1:0,t:0,pw:{},psn:0,fz:0,log:'',tw:[],dn:0,iw:0,rf:0,nx:0,pk:null,bomb:1,gz:0,nb:0};
+if(has('mu')){const c=B.draw.filter(o=>!o.up);if(c.length)pick(c).up=1}
+if(has('uch'))B.pw.tb=3;if(has('rk'))B.pw.atk=1;if(has('oni')){B.pw.atk=(B.pw.atk||0)+2;G.hp=Math.max(1,G.hp-3)}if(G.hang){B.fz=1;G.hang=0}if(G.ch==='s')B.tt=1;if(G.ch==='f')B.pw.atk=(B.pw.atk||0)+1;if(has('lvw'))B.blk+=6;if(has('on'))B.pw.atk=(B.pw.atk||0)+1;if(has('pa'))B.pw.atk=(B.pw.atk||0)+1;if(has('gu2'))B.pw.atk=(B.pw.atk||0)+1;
+if(has('hk1'))B.pw.atk=(B.pw.atk||0)+2;if(has('yk')||G.ch==='re')B.dn=-1;if(has('shd'))B.pw.dl=(B.pw.dl||0)+4;if(has('bks'))B.blk+=10;if(has('hrb'))B.es.forEach(e=>e.p=(e.p||0)+2);if(G.ch==='ci')B.pw.fi=2;if(G.bless){B.pw.atk=(B.pw.atk||0)+2;G.bless=0}if(has('ep'))B.blk+=5;if(has('bsk'))B.bomb++;
+if(G.ch==='m')B.hand.push({id:pick(pool().filter(k=>k!=='kr'&&!C[k].d.dd)),g:1});
+exhInit();turn(true)}
+const alive=()=>B.es.filter(e=>e.hp>0);
+const tgt=()=>(B.es[B.t]&&B.es[B.t].hp>0)?B.es[B.t]:alive()[0];
+function drawN(n){for(let i=0;i<n;i++){if(!B.draw.length){B.draw=shuf(B.disc);B.disc=[]}if(!B.draw.length)return;B.hand.push(B.draw.pop())}}
+function turn(first){B.en=3-B.fz;B.fz=0;B.evade=0;B.ob=has('ob')?1:0;if(!first)B.blk=0;B.blk+=(B.pw.tb||0);
+if(B.psn>0){G.hp-=B.psn;B.psn--;if(G.hp<=0)return over(false)}
+if(B.pw.rg)heal(B.pw.rg);drawN(5+(has('br')?1:0)+(has('pa')?1:0)+(B.pw.dr||0));render()}
+function hit(e,v,pierce){if(!pierce){const a=Math.min(e.blk,v);e.blk-=a;v-=a}e.hp-=v;if(has('ice')&&R(100)<15)e.frz=1}
+function calc(id,d){let v=d.dmg+(B.pw.atk||0)+(id==='bz'&&has('hb')?2:0)+(id==='sl'&&has('sk')?3:0);if(d.fire)v*=1+(has('hl')?.75:0)+(B.pw.fire||0);if(has('yr')&&R(100)<20)v*=3;return Math.round(v*(B.nx||1))}
+function play(i){const o=B.hand[i],c=cs(o),d=c.d;if(B.en<c.cost)return;B.en-=c.cost;B.hand.splice(i,1);if(!o.g&&!d.pw)B.disc.push(o);
+if(d.dmg){for(let h=0;h<(d.hits||1);h++){const al=alive();if(!al.length)break;const ts=(d.all||has('gu'))?al:[d.rnd?pick(al):tgt()];
+if(!d.all&&!d.rnd&&!has('gu')&&has('on')&&R(2)){const x=al.filter(e=>e!==ts[0]);if(x.length)ts.push(pick(x))}
+ts.forEach(e=>hit(e,calc(o.id,d),d.pierce));
+if(d.splash&&alive().length)hit(pick(alive()),d.splash,0)}}
+if(d.hp){G.hp-=d.hp;if(G.hp<=0)return over(false)}
+if(d.blk)B.blk+=d.blk;if(d.heal)heal(d.heal);if(d.gold)G.gold+=d.gold;if(d.evade)B.evade++;
+if(d.en)B.en+=d.en;if(d.nx)B.nx=2;
+const ex=(d.hs?B.hand.length*d.hs:0)+(d.ds?B.disc.length*d.ds:0)+(d.bd?B.blk:0);
+if(ex>0&&alive().length)hit(tgt(),calc(o.id,{dmg:ex,fire:d.fire}),0);
+if((d.dmg||ex>0)&&B.nx&&!d.nx)B.nx=0;
+if(d.frz&&alive().length)tgt().frz=1;if(d.psn&&alive().length)tgt().p=(tgt().p||0)+d.psn;
+if(d.wk&&alive().length)(d.wka?alive():[tgt()]).forEach(e=>e.wk=d.wk);
+if(d.upall)B.hand.forEach(x=>x.up=1);
+if(d.cp)for(let j=0;j<d.cp&&B.hand.length;j++)B.hand.push({...pick(B.hand),g:1});
+if(d.ref){B.hand.filter(x=>!x.g).forEach(x=>B.disc.push(x));B.hand=[];drawN(5)}
+if(d.add)for(let j=0;j<d.add;j++)B.hand.push({id:pick(pool().filter(k=>k!=='kr')),g:1});
+if(d.pw)B.pw[d.pw]=(B.pw[d.pw]||0)+d.v;
+if(d.draw)drawN(d.draw);
+if(!alive().length)return win();render()}
+function endTurn(){B.hand.filter(o=>!o.g).forEach(o=>B.disc.push(o));B.hand=[];const log=[];
+for(const e of alive()){if(e.p){e.hp-=e.p;e.p--;if(e.hp<=0)continue}if(e.frz){e.frz=0;log.push(e.n+'は凍結で動けない');continue}
+e.blk=0;const[k,v,t=1,x]=e.i;
+if(k==='a')for(let j=0;j<t;j++){let dm=Math.max(0,v+e.str-(has('fan')?1:0)-(e.wk?3:0));
+if(B.evade>0){B.evade--;continue}if(B.ob>0){B.ob--;continue}
+if(x!=='x'){const a=Math.min(B.blk,dm);B.blk-=a;dm-=a}G.hp-=dm;if(x==='f')B.fz=1;if(x==='p')B.psn+=2}
+else if(k==='d')e.blk=v;else e.str+=v;if(e.wk)e.wk--;}
+if(G.hp<=0)return over(false);if(!alive().length)return win();
+alive().forEach(e=>{e.k++;e.i=e.mv[e.k%e.mv.length]});B.log=log.join(' ');turn()}
+const intent=e=>{const[k,v,t=1,x]=e.i;if(k==='a')return`攻撃 ${Math.max(0,v+e.str-(has('fan')?1:0)-(e.wk?3:0))}${t>1?'×'+t:''}${x==='x'?'(貫通)':''}${x==='f'?'(氷結)':''}${x==='p'?'(毒)':''}`;return k==='d'?`防御 ${v}`:`強化 +${v}`};
+function render(){chkSp();$v(head()+`<div class="row es">${B.es.map((e,i)=>`<div class="en ${e===tgt()?'t':''} ${e.hp<=0?'dead':''}" onclick="B.t=${i};render()"><b>${e.n}</b>${AB[e.n]?`<br><small class="log">${AT[AB[e.n]]}</small>`:''}<div class="bar"><i style="width:${Math.max(0,e.hp/e.m*100)}%"></i></div>${Math.max(0,e.hp)}/${e.m}${e.blk?` 防${e.blk}`:''}${e.frz?' 凍':''}${e.p?' 毒'+e.p:''}${e.cd?` <b style="color:#ff6b6b">時間${e.cd}</b>`:''}<div class="it">${e.hp>0?atkName(e)+intent(e):''}</div></div>`).join('')}</div>
+<div class="log">${B.log}</div>
+<div class="me"><span>霊力 <b style="color:var(--gold)">${B.en}</b>/3　ブロック <b style="color:var(--ice)">${B.blk}</b>${B.psn?`　毒${B.psn}`:''}　グレイズ${B.gz}/3　${B.wx||''}・${B.td||''}${B.evade?'　回避':''}${B.ob?'　祓':''}</span><span class="log">山札${B.draw.length} 捨札${B.disc.length}</span><button onclick="bomb()" ${B.bomb?'':'disabled'}>ボム${B.bomb}</button> ${B.tt==null?'':`<button onclick="tt()" ${B.tt?'':'disabled'}>時操り</button>`} <button class="pri" onclick="endTurn()">ターン終了</button></div>
+${B.pk?`<p class="log">${B.pk.m==='l'?'手札に加えるカードを選ぶ':'捨てるカードを選ぶ'}</p><div class="row">${(B.pk.m==='l'?B.pk.a:B.hand).map((o,i)=>cardEl(o,`onclick="pickC(${i})"`)).join('')}</div>`:`<div class="row">${B.hand.map((o,i)=>cardEl(o,`onclick="play(${i})"`,B.en<cs(o).cost?'disabled':'')).join('')}</div>`}`)}
+function win(){if(revive()){B.hand.length?render():turn();return}G.w=G.w.filter(k=>!B.tw.includes(k));if(has('yak'))heal(6);const cap=B.es.filter(e=>e.cd>0).length;G.gold+=30*cap;const bn=Math.floor((B.ok||0)/5)+(B.tk?0:25)+((B.hh||[]).length<=3?15:0);G.gold+=bn;if(bn)fxQ(()=>fxBn('ボーナス お賽銭+'+bn,'#ffe066'),1500);if(cap)fxQ(()=>fxBn('スペルカード取得！ お賽銭+'+30*cap,'#ffe066'),1500);const g=(has('ssb')?20:0)+10+R(11)+B.kind*25+(B.kind===3?60:0);G.gold+=g;if(B.kind===0)heal(Math.max(2,Math.ceil(G.mhp*.04)));
+if(B.kind===3){G.act++;heal(Math.ceil(G.mhp*.3));if(G.act>=4&&!G.endless)return over(true);G.step=0}
+const opts=rew(B.kind).map(id=>({id}));
+const wr=(B.kind>=1&&wpool().length)?pick(wpool()):null;
+$v(head()+`<h2>勝利　お賽銭+${g}</h2>${wr?`<p>戦利品: <button onclick="getW('${wr}')"><b>${(cxSeen('w',wr),W[wr][0])}</b>　${W[wr][1]}</button>${G.w.length>=WMAX?`<br><span class="log">武器上限：取ると「${W[G.w[1]][0]}」と交換</span>`:''}</p>`:''}<p class="log">カードを1枚選ぶ</p><div class="row">${opts.map(o=>cardEl(o,`onclick="addC('${o.id}')"`)).join('')}</div><button onclick="map()">スキップ</button>`)}
+function addC(id){G.deck.push({id});map()}
+function getW(k){addW(k);if(k==='om'){G.mhp+=10;G.hp+=10}map()}
+// ---- その他ノード ----
+function chest(){let rw=null;const k=wpool().length?pick(wpool()):null;if(k){rw=addW(k);if(k==='om'){G.mhp+=10;G.hp+=10}}else G.gold+=60;
+$v(head()+`<h2>宝箱</h2><p>${k?`<b>${W[k][0]}</b> を手に入れた。${W[k][1]}${rw?`（武器上限のため「${W[rw][0]}」と交換）`:''}`:'お賽銭+60'}</p><button onclick="map()">進む</button>`)}
+function rest(){$v(head()+`<h2>休憩所</h2><div class="ch"><button onclick="heal(Math.ceil(G.mhp*restRate()));map()">休む（HP${Math.round(restRate()*100)}%回復）</button><button onclick="upg()">カードを強化する</button> <button onclick="rmR()">カードを削除する</button></div>`)}
+function upg(){$v(head()+`<h2>強化するカード</h2><div class="row">${G.deck.map((o,i)=>o.up?'':cardEl(o,`onclick="G.deck[${i}].up=1;map()"`)).join('')}</div><button onclick="rest()">戻る</button>`)}
+function shop(){const cs_=shuf(pool()).slice(0,3),w=wpool().length?pick(wpool()):null;G.sh={cs:cs_,w,rm:50};shopV()}
+function shopV(){const s=G.sh;$v(head()+`<h2>商店</h2><div class="row">${s.cs.map((id,i)=>id?`<div>${cardEl({id},`onclick="buyC(${i})"`,G.gold<50?'disabled':'')}<div class="log">50</div></div>`:'').join('')}</div>
+<div class="row">${s.w?`<button onclick="buyW()" ${G.gold<120?'disabled':''}>${W[s.w][0]}（${W[s.w][1]}）120</button>`:''}<button onclick="rmV()" ${G.gold<s.rm?'disabled':''}>カードを削除 ${s.rm}</button></div><button class="pri" onclick="map()">店を出る</button>`)}
+function buyC(i){G.gold-=50;G.deck.push({id:G.sh.cs[i]});G.sh.cs[i]=0;shopV()}
+function buyW(){G.gold-=pr(120);getWS(G.sh.w);G.sh.w=null;shopV()}
+function getWS(k){const r=addW(k);if(k==='om'){G.mhp+=10;G.hp+=10}return r}
+function rmV(){$v(head()+`<h2>削除するカード</h2><div class="row">${G.deck.map((o,i)=>cardEl(o,`onclick="G.gold-=G.sh.rm;G.sh.rm+=25;G.deck.splice(${i},1);shopV()"`)).join('')}</div><button onclick="shopV()">戻る</button>`)}
+function event(ev){if(ev===undefined)ev=pickEv();if(ev>1)return evx(ev);
+if(ev===0)$v(head()+`<h2>神社の賽銭箱</h2><p>お賽銭を捧げると祝福があるという。</p><div class="ch"><button onclick="G.gold-=20;G.mhp+=6;G.hp+=6;map()" ${G.gold<20?'disabled':''}>20捧げる（最大HP+6）</button><button onclick="map()">通り過ぎる</button></div>`);
+else $v(head()+`<h2>怪しいキノコ</h2><p>道端に見慣れないキノコが生えている。</p><div class="ch"><button onclick="mush()">食べる</button><button onclick="map()">やめておく</button></div>`)}
+function mush(){const r=R(3);if(r===0){heal(15);G.msg='元気が湧いた。HP15回復'}else if(r===1){G.hp=Math.max(1,G.hp-8);G.msg='腹を壊した。HP-8'}else{G.gold+=40;G.msg='お賽銭40を見つけた'}
+$v(head()+`<p>${G.msg}</p><button onclick="map()">進む</button>`)}
+function over(ok){if(!ok&&G.lives>0&&alive().length){G.lives--;G.hp=Math.ceil(G.mhp*.5);B.blk=8;B.psn=0;B.log+=' 残機を失った！HP回復';if(!B.hand.length)return turn();return render()}$v(`<h1>${ok?'異変解決':'力尽きた'}</h1><p>${ok?'八雲紫を退け、幻想郷に平穏が戻った。':`${G.act+1}章 ${G.step}ノードで敗北。`}</p><p class="log">デッキ${G.deck.length}枚 / 武器${G.w.length}個</p><button class="pri" onclick="title()">もう一度</button>`)}
+const frzTry=(e,p)=>{if(e&&e.hp>0&&!e.fi&&!e.frz&&R(100)<p+(B.wx==='雪'?15:0)){e.frz=1;if(G.ch==='ci')B.blk+=2}};
+const frzSet=(e,n)=>{if(e&&e.hp>0&&!e.fi&&!e.frz){e.frz=n;if(G.ch==='ci')B.blk+=2}};
+function hit(e,v,pierce){if(B.pw.fi&&e.frz)v+=B.pw.fi;let a=0;if(!pierce){a=Math.min(e.blk,v);e.blk-=a;v-=a}B.dd=(B.dd||0)+Math.max(0,Math.min(v,e.hp));B.ok=(B.ok||0)+Math.max(0,v-Math.max(0,e.hp));e.hp-=v;e.h=1;FL.push({i:B.es.indexOf(e),v,a,c:CUR})}
+function calc(id,d){let v=d.dmg+(B.pw.atk||0)+(id==='bz'&&has('hb')?2:0)+(id==='sl'&&has('sk')?3:0);if(d.fire)v*=1+(has('hl')?.75:0)+(B.pw.fire||0);const cc=(has('yr')?20:0)+(has('gk')?20:0)+(has('gu2')?30:0)+(B.pw.cr||0)+(d.cr||0);const wx=B.wx;if(d.fire||TAG[id]==='f')v*=wx==='晴れ'?1.25:wx==='雨'?.75:1;if(TAG[id]==='i')v*=wx==='雨'?1.25:wx==='晴れ'?.85:1;if(d.mo&&B.td==='夜')v*=2;if(d.su&&B.td==='昼')v*=2;if(R(100)<cc)v*=has('yr')?3:2;if(B.blk>=10)v+=B.pw.bk||0;return Math.round(v*(B.nx||1))}
+function bet(o){const d=cs(o).d,t=alive().filter(e=>!e.bs&&e.hp<=e.m*d.rp/100).sort((a,b)=>a.hp-b.hp)[0];if(t){t.hp=0;B.log+=' 死の賭け成功'}else{G.hp-=d.fh;B.log+=' 死の賭け失敗'}}
+function drawN(n){for(let i=0;i<n;i++){if(!B.draw.length){B.draw=shuf(B.disc);B.disc=[]}if(!B.draw.length)return;const o=B.draw.pop();if(cs(o).d.dd){bet(o);continue}B.hand.push(o)}}
+function turn(first){B.en=Math.max(0,3-B.fz+(B.pw.en||0));B.fz=0;B.evade=0;B.ob=has('ob')?1:0;B.iw=0;B.rf=0;B.nb=0;(B.hh=B.hh||[]).push(G.hp);B.ca=0;if(G.ch==='y'&&!B.nx)B.nx=1.75;if(!first)B.blk=0;B.blk+=(B.pw.tb||0);
+if(B.psn>0){G.hp-=B.psn;B.psn--}
+if(B.pw.rg)heal(B.pw.rg);if(B.hot>0){heal(3);B.hot--}
+if(G.ch==='yu')B.es.forEach(e=>{if(e.hp>0){let v=Math.min(10,Math.max(1,Math.round(e.m*.02)));if(e.bs)v=Math.ceil(v/2);e.hp-=v}});if(B.pw.dl&&alive().length)hit(pick(alive()),B.pw.dl,0);
+if(G.hp<=0)return over(false);if(!alive().length)return win();
+drawN(Math.max(1,5+(has('br')?1:0)+(has('pa')?1:0)+(B.pw.dr||0)-B.dn));B.dn=0;
+if(G.hp<=0)return over(false);if(!alive().length)return win();render()}
+function play(i){if(B.pk)return;const o=B.hand[i],c=cs(o),d=c.d;if(B.en<c.cost)return;B.en-=c.cost;B.hand.splice(i,1);if(!o.g&&!d.pw&&!d.ex)B.disc.push(o);
+if(d.hp){G.hp-=d.hp;if(G.hp<=0)return over(false)}
+B.dd=0;B.es.forEach(e=>e.h=0);let kd=0,atk=0;if(d.rp&&!d.dd&&alive().length){const e=tgt();if(!e.bs&&e.hp<=e.m*d.rp/100){e.hp=0;kd=1;B.log='即死'}}
+if(d.dmg&&!kd){atk=1;for(let h=0;h<(d.hits||1);h++){const al=alive();if(!al.length)break;const ts=(d.all||has('gu'))?[...al]:[d.rnd?pick(al):tgt()];
+if(!d.all&&!d.rnd&&!has('gu')&&has('on')&&R(2)){const x=al.filter(e=>e!==ts[0]);if(x.length)ts.push(pick(x))}
+ts.forEach(e=>hit(e,calc(o.id,d)+(d.lo&&e.hp<=e.m/2?d.lo:0)+(d.fb&&e.frz?d.fb:0),d.pierce));
+if(d.splash&&alive().length)hit(pick(alive()),d.splash,0)}
+if(d.sa)alive().forEach(e=>e.str-=d.sa)}
+if(d.blk)B.blk+=Math.max(0,d.blk-(B.pw.bm||0));if(d.heal)heal(d.heal);if(d.gold)G.gold+=d.gold;if(d.evade)B.evade++;
+if(d.bm)B.pw.bm=(B.pw.bm||0)+d.bm;if(d.iw)B.iw=1;if(d.rf)B.rf++;if(d.dn)B.dn+=d.dn;
+if(d.en)B.en+=d.en;if(d.nx)B.nx=2;
+const ex=(d.hs?B.hand.length*d.hs:0)+(d.ds?B.disc.length*d.ds:0)+(d.bd?B.blk:0)+(d.tc?B.disc.filter(o=>TAG[o.id]===d.tc).length*d.tm:0)+(d.gd?Math.floor(G.gold/d.gd):0)+(d.pq?(B.pw.dl||0)*d.pq:0)+(d.cc?(B.ca||0)*d.cc:0);
+if(ex>0&&alive().length){atk=1;hit(tgt(),calc(o.id,{dmg:ex,fire:d.fire}),0)}
+if(atk&&B.nx&&!d.nx)B.nx=0;
+if(atk&&alive().length)frzTry(tgt(),(has('ice')?15:0)+(B.pw.ic||0));
+if(d.fp&&!d.coin)frzTry(tgt(),d.fp);if(d.fz2)frzSet(tgt(),2+(has('wt')?1:0));if(d.enl&&!d.coin)B.fz+=d.enl;
+if(d.coin){if(R(2)){if(d.gw)G.gold+=d.gw;if(d.fp)frzTry(tgt(),d.fp);B.log='表'}else{if(d.hl)G.hp-=d.hl;if(d.enl)B.fz+=d.enl;B.log='裏'}}
+if(d.wk&&alive().length)(d.wka?alive():[tgt()]).forEach(e=>e.wk=d.wk);
+if(d.rr&&alive().length){const e=tgt();e.k=R(e.mv.length);e.i=e.mv[e.k]}
+if(d.tw){const p=Object.keys(W).filter(k=>!has(k)&&k!=='om'&&k!=='mu'&&!EXH[k]&&!DGW[k]);if(p.length){const k=pick(p);G.w.push(k);B.tw.push(k);B.log=W[k][0]+'を得た'}}
+if(d.upall)B.hand.forEach(x=>x.up=1);
+if(d.cp)for(let j=0;j<d.cp&&B.hand.length;j++)B.hand.push({...pick(B.hand),g:1});
+if(d.add)for(let j=0;j<d.add;j++)B.hand.push({id:pick(pool().filter(k=>k!=='kr'&&!C[k].d.dd)),g:1});
+if(d.pw==='en')B.pw.dr=(B.pw.dr||0)-1;
+if(d.pw)B.pw[d.pw]=(B.pw[d.pw]||0)+d.v;
+if(d.ref){B.hand.filter(x=>!x.g).forEach(x=>B.disc.push(x));B.hand=[];drawN(5)}
+if(d.draw)drawN(d.draw);
+if(d.look){if(!B.draw.length){B.draw=shuf(B.disc);B.disc=[]}if(B.draw.length)B.pk={m:'l',a:B.draw.slice(-d.look),bt:d.bt}}
+if(d.dc&&B.hand.length)B.pk={m:'d'};
+if(d.psn&&alive().length){const e=tgt();e.p=(e.p||0)+d.psn}if(d.psa)alive().forEach(e=>e.p=(e.p||0)+d.psa);if(d.fza)alive().forEach(e=>frzSet(e,1));if(d.gz)for(let j=0;j<d.gz;j++)gzp();if(d.fz1&&alive().length)frzSet(tgt(),1+(has('wt')?1:0));if(d.pdb&&alive().length){const e=tgt();e.p=(e.p||0)*2}if(d.rw){const h=B.hh||[],t=h[Math.max(0,h.length-1-d.rw)];if(t>G.hp)heal(t-G.hp)}if(d.ls&&B.dd)heal(Math.floor(B.dd*d.ls));if(d.up1){const x=B.hand.filter(c=>!c.up);if(x.length)pick(x).up=1}if(d.hot)B.hot=d.hot;
+if(d.sr){const i=B.draw.findIndex(c=>TAG[c.id]===d.sr);if(i>=0)B.hand.push(B.draw.splice(i,1)[0])}if(d.gs&&G.gold>=d.gs){G.gold-=d.gs;drawN(d.gdr)}if(d.rcl&&B.disc.length)B.hand.push(B.disc.splice(R(B.disc.length),1)[0]);if(d.nb)B.nb=1;if(d.dbf)alive().forEach(e=>{if(e.str>0)e.str=0});if(d.cp2)B.psn=0;if(d.pc)alive().forEach(e=>hit(e,Math.round(e.hp*d.pc*(e.bs?.5:1)),1));if(d.wd)wdEff(o);if(d.bd2){const n=B.disc.splice(0,Math.min(8,B.disc.length));B.disc.push(...B.hand);B.hand=n}if(d.bmb)B.bomb++;
+if(B.pw.pd)alive().forEach(e=>{if(e.h&&e.p>=5)e.p*=2});
+{const f=d.fire||TAG[o.id]==='f',m=G.ch==='pc'?2:1;B.es.forEach(e=>{if(e.hp<=0||!e.h)return;if(f&&e.frz){hit(e,6*m,1);B.log+=' 蒸気！'}if(f&&e.p>0){hit(e,e.p*2*m,1);e.p=0;B.log+=' 爆発！'}if(TAG[o.id]==='i'&&e.p>0){e.p+=3*m;B.log+=' 猛毒！'}})}
+const tg=TAG[o.id];if(tg==='f'&&B.pw.fb)alive().forEach(e=>hit(e,B.pw.fb,0));if(tg==='s'&&B.pw.sd)drawN(B.pw.sd);
+if(!alive().length)return win();if(G.hp<=0)return over(false);render()}
+function pickC(i){const p=B.pk;if(p.m==='l'){const c=p.a[i];B.draw.splice(B.draw.length-p.a.length+i,1);B.hand.push(c);if(p.bt&&p.a.length>1){const r=B.draw.splice(B.draw.length-(p.a.length-1),p.a.length-1);B.draw.unshift(...r)}}else{const x=B.hand.splice(i,1)[0];if(!x.g)B.disc.push(x)}B.pk=null;render()}
+function endTurn(){if(B.pk)return;const kp=B.hand.filter(o=>cs(o).d.rt);B.hand.filter(o=>!o.g&&!cs(o).d.rt).forEach(o=>B.disc.push(o));B.hand=kp;const log=[];
+for(const e of alive()){if(e.hp<=0)continue;if(e.p){e.hp-=e.p;e.p--;if(e.hp<=0)continue}
+if(e.fi&&!e.frz)e.fi--;
+if(e.frz){e.frz--;if(!e.frz)e.fi=1;log.push(e.n+'は動けない');continue}
+e.blk=0;const[k,v,t=1,x]=e.i;
+if(k==='a')for(let j=0;j<t;j++){const dm=Math.max(0,v+e.str-(has('fan')?1:0)-(e.wk?3:0));
+if(B.nb)continue;if(B.rf>0){B.rf--;{const rt=pick(alive());if(rt)hit(rt,dm,0)}log.push('攻撃を跳ね返した');continue}
+if(B.evade>0){B.evade--;gzp();continue}if(B.ob>0){B.ob--;gzp();continue}if(R(100)<(B.pw.ev||0)){gzp();continue}
+let r=dm;if(x!=='x'){const a=Math.min(B.blk,r);B.blk-=a;r-=a}G.hp-=r;B.tk=(B.tk||0)+r;FL.push({p:1,v:r,a:dm-r});if(r<=0&&dm>0)gzp();if(x==='f')B.fz=1;if(x==='p')B.psn+=2;if(B.iw&&R(2))frzTry(e,100)}
+else if(k==='d')e.blk=v;else e.str+=has('ofd')?0:v;
+if(e.wk)e.wk--;if(e.cd){e.cd--;if(!e.cd){tout(e,log);fxQ(()=>fxBn('スペルカード・タイムアウト','#e5333f'),1500)}}abil(e,log)}
+if(G.hp<=0)return over(false);if(!alive().length)return win();
+{const t0=B.tkp||0;B.nd=(B.tk||0)===t0?(B.nd||0)+1:0;B.tkp=B.tk||0;if(B.nd>=2||B.hh.length>=8){alive().forEach(e=>e.str+=1);log.push('敵の弾幕が激しさを増した')}}
+alive().forEach(e=>{e.k++;e.i=e.mv[e.k%e.mv.length]});B.log=log.join(' ');turn()}
+const TG={f:'火',i:'氷',p:'毒',s:'星',k:'結界'},TAG={};
+const tag=(t,s)=>s.split(' ').forEach(k=>TAG[k]=t);
+Object.assign(C,{
+bo:{n:'八卦炉の暴走',c:2,d:{pw:'fb',v:2},u:{v:3},ch:'m'},
+zr:{n:'絶対零度',c:2,d:{pw:'fi',v:5},u:{v:7}},
+pm:{n:'蔓延する毒',c:2,d:{pw:'pd',v:1},u:{c:1}},
+ss:{n:'星屑の軌跡',c:2,d:{pw:'sd',v:1},u:{c:1},ch:'m'},
+bj:{n:'結界の守護',c:2,d:{pw:'bk',v:3},u:{v:4},ch:'r'},
+pg:{n:'毒霧',c:2,d:{psa:4},u:{psa:6}},
+ps:{n:'猛毒の針',c:1,d:{dmg:4,psn:3},u:{dmg:5,psn:4}},
+iz:{n:'氷の弾',c:1,d:{dmg:4,fp:40},u:{dmg:6,fp:50}}});
+delete C.sz;
+C.mp.d={dmg:20,all:1,fire:1,pierce:1};C.mp.u={dmg:26};
+C.ms.d={dmg:8,all:1,sa:2};C.ms.u={dmg:10,sa:3};
+C.pf={n:'パーフェクトフリーズ',c:3,d:{fza:1},u:{c:2}};
+C.pn.d={psn:6};C.pn.u={psn:9};
+['kp','cb','zk','mn'].forEach(k=>C[k].ch='r');['pk','pb','ho'].forEach(k=>C[k].ch='m');
+tag('f','mp mb mm il lv hf hs bo');tag('i','iq pf iw ih ig tm zr iz');tag('p','pn ps pg pm');tag('s','sl mh sb ab ho dm ha ss');tag('k','kk hk kp zk un sm mn tk cb ym bj');
+const RARE='mp lv pf db ym kd ab ar tm bo zr pm ss bj sy fu ih'.split(' '),UNC='hs mh sb gn kn rn il sc ts kp ky kz sm mn hf pk yy tk zk un ig ob sd ub pb ho kw tg oc sx fc ml mm mb pg ps iz ha'.split(' ');
+const RA=id=>RARE.includes(id)?'r':UNC.includes(id)?'u':'c';
+function rew(kind,n=3){const P=pool(),wt={c:kind===3?0:6,u:3,r:kind?3:1},out=[];
+const wp=ids=>{const L=[];ids.forEach(k=>{for(let i=0;i<wt[RA(k)];i++)L.push(k)});return L};
+const cnt={};G.deck.forEach(o=>{const t=TAG[o.id];if(t)cnt[t]=(cnt[t]||0)+1});
+const top=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0];
+if(top&&cnt[top]>=2){const L=wp(P.filter(k=>TAG[k]===top));if(L.length)out.push(pick(L))}
+while(out.length<n){const L=wp(P.filter(k=>!out.includes(k)));if(!L.length)break;out.push(pick(L))}
+return out}
+const PR={c:40,u:60,r:90};
+function shop(){G.rm=G.rm||0;const xs=Object.keys(EXH).filter(k=>!has(k));G.sh={cs:rew(0),w:wpool().length?pick(wpool()):null,x:xs.length?pick(xs):null};shopV()}
+function shopV(){const s=G.sh,rc=rmCost(),full=G.w.length>=WMAX&&(s.w||s.x);$v(head()+`<h2>商店</h2>${G.act?`<p class="log">章が進み物価が上がっている（+${G.act*10}%）</p>`:''}<div class="row">${s.cs.map((id,i)=>id?`<div>${cardEl({id},`onclick="buyC(${i})"`,G.gold<pr(PR[RA(id)])?'disabled':'')}<div class="log">${pr(PR[RA(id)])}</div></div>`:'').join('')}</div><div class="row">${s.w?`<button onclick="buyW()" ${G.gold<pr(120)?'disabled':''}>${W[s.w][0]}（${W[s.w][1]}）${pr(120)}</button>`:''}${s.x?`<button onclick="buyX()" ${G.gold<pr(EXH[s.x])?'disabled':''}>展示品「${W[s.x][0]}」（${W[s.x][1]}）${pr(EXH[s.x])}</button>`:''}<button onclick="rmV()" ${G.gold<rc?'disabled':''}>カードを削除 ${rc||'無料'}</button></div>${full?'<p class="log">武器は10個まで。買うと古い武器と交換になる</p>':''}<button class="pri" onclick="map()">店を出る</button>`)}
+function buyC(i){const id=G.sh.cs[i];G.gold-=pr(PR[RA(id)]);G.deck.push({id});G.sh.cs[i]=0;shopV()}
+function rmV(){$v(head()+`<h2>削除するカード</h2><div class="row">${G.deck.map((o,i)=>cardEl(o,`onclick="doRm(${i})"`)).join('')}</div><button onclick="shopV()">戻る</button>`)}
+Object.assign(E,{リグル:{hp:28,mv:[['a',5],['a',4,2],['d',5]]},橙:{hp:32,mv:[['a',6],['a',3,3]]},ミスティア:{hp:48,mv:[['a',4,3],['a',9],['d',8]]},人形:{hp:32,mv:[['a',7],['d',5]]},アリス:{hp:55,mv:[['a',8],['b',2],['a',6,2]]},咲夜:{hp:60,mv:[['a',4,3],['d',8],['a',14,1,'x']]},鈴仙:{hp:42,mv:[['a',5,2],['a',9],['d',6]]},妹紅:{hp:70,mv:[['a',12],['b',3],['a',8,2]]}});
+ACT[0].N.push('リグル','橙');ACT[0].El.push('ミスティア');ACT[1].N.push('人形');ACT[1].El.push('アリス','咲夜');ACT[2].N.push('鈴仙');ACT[2].El.push('妹紅');
+E.チルノ.sp={at:.5,n:'氷符「アイシクルフォール」',mv:[['a',4,4,'f'],['d',8]]};
+E.ルーミア.sp={at:.5,n:'闇符「ディマーケイション」',mv:[['a',6,4],['b',2],['a',16]]};
+E.妖夢.sp={at:.5,n:'人鬼「未来永劫斬」',mv:[['a',6,4],['a',18]]};
+E.紫.sp={at:.5,n:'境符「波と粒の境界」',mv:[['a',7,3],['b',3],['a',20,1,'x']]};
+E.レミリア.sp={at:.5,n:'神槍「スピア・ザ・グングニル」',mv:[['a',22,1,'x'],['a',8,3],['b',3]]};
+E.幽々子.sp={at:.6,n:'「死蝶『華胥の永眠』」',mv:[['a',9,3,'x'],['a',24],['b',2],['a',7,4]]};
+Object.assign(W,{uch:['天狗の団扇','毎ターン開始時ブロック+3'],rk:['楼観剣','攻撃のダメージ+1'],oni:['鬼の盃','戦闘開始時、攻撃+2・HP-3'],ssb:['賽銭箱','勝利時お賽銭+20'],yak:['永遠亭の薬','勝利時HP+6']});
+Object.assign(C,{gx:{n:'グレイズの極意',c:1,d:{blk:3,gz:3},u:{blk:5}},bc:{n:'ボム補充',c:1,d:{bmb:1,ex:1},u:{c:0}},bs:{n:'ブレイジングスター',c:2,d:{dmg:14,fire:1,pierce:1,hp:3},u:{dmg:19},ch:'m'}});
+TAG.gx='k';TAG.bs='f';UNC.push('gx','bc','bs');
+function gzp(){B.gz++;if(B.gz>=3){B.gz-=3;B.fz-=1}}
+function chkSp(){revive();B.es.forEach(e=>{if(e.hp>0&&e.sp&&!e.spd&&e.hp<=e.m*e.sp.at){e.spd=1;e.mv=e.sp.mv;e.k=0;e.i=e.mv[0];e.blk=0;e.cd=3;fxSp(e);B.log+=` ${e.n}がスペルカード宣言：${e.sp.n}`}})}
+function bomb(){if(!B.bomb||B.pk)return;B.bomb--;alive().forEach(e=>hit(e,8,0));B.nb=1;B.log='ボム！全ての敵に8ダメージ、このターンの敵の攻撃を全て無効化';if(!alive().length)return win();render()}
+function evx(n){const h=head();
+if(n===2)$v(h+`<h2>神社の宴会</h2><p>霊夢が宴会を開いている。</p><div class="ch"><button onclick="heal(Math.ceil(G.mhp*.3));G.hang=1;map()">飲む（HP30%回復・次の戦闘で霊力-1）</button><button onclick="G.gold+=20;map()">遠慮する（お賽銭+20）</button></div>`);
+else if(n===3)$v(h+`<h2>慧音の授業</h2><p>歴史を学べば、スペルも磨かれる。</p><div class="row">${G.deck.map((c,i)=>c.up?'':cardEl(c,`onclick="G.deck[${i}].up=1;map()"`)).join('')}</div><button onclick="map()">受けない</button>`);
+else if(n===4)$v(h+`<h2>Pアイテムの山</h2><p>妖精の罠かもしれない。</p><div class="ch"><button onclick="G.mhp=Math.max(20,Math.ceil(G.mhp/2));G.hp=Math.min(G.hp,G.mhp);G.lives=Math.min(4,G.lives+1);map()" ${G.lives>=4||G.mhp<=20?'disabled':''}>拾う（最大HP半分・残機+1）</button><button onclick="map()">無視する</button></div>`);
+else if(n===5)$v(h+`<h2>守矢神社</h2><p>早苗が参拝を勧めてくる。</p><div class="ch"><button onclick="G.gold-=40;getWS(pick(wpool()));map()" ${G.gold<40||!wpool().length?'disabled':''}>お賽銭40で祈る（ランダム武器）</button><button onclick="map()">通り過ぎる</button></div>`);
+else $v(h+`<h2>永遠亭の薬師</h2><p>永琳が怪しい薬を差し出す。</p><div class="ch"><button onclick="G.gold-=30;G.mhp+=8;G.hp+=8;map()" ${G.gold<30?'disabled':''}>薬を買う30（最大HP+8）</button><button onclick="map()">断る</button></div>`)}
+const FX=()=>$('#fx')||document.body.appendChild(Object.assign(document.createElement('div'),{id:'fx'}));
+function fxEl(h,ms){const d=document.createElement('div');d.innerHTML=h;const e=d.firstElementChild;FX().appendChild(e);setTimeout(()=>e.remove(),ms);return e}
+function fxBn(n,c){snd('spell');fxEl(`<div class="bn" style="--c:${c}">${n}</div>`,1500)}
+function fxRun(t,c){snd(t);const s=`--c:${c}`;
+if(t==='beam')fxEl(`<div class="bm" style="${s}"></div>`,1000);
+else if(t==='slash'){fxEl(`<div class="sl" style="${s}"></div>`,700);fxEl(`<div class="fo" style="${s}"></div>`,600)}
+else if(t==='freeze')fxEl(`<div class="fz" style="${s}"></div>`,1300);
+else if(t==='rings')for(let i=0;i<3;i++)setTimeout(()=>fxEl(`<div class="rg" style="${s}"></div>`,1100),i*180);
+else if(t==='petals'||t==='rain'){const r=t==='rain';for(let i=0;i<(r?36:26);i++)fxEl(`<div class="${r?'rn':'pt'}" style="${s};left:${R(100)}%;animation-delay:${R(600)}ms"></div>`,2400)}
+else if(t==='dark')fxEl('<div class="dk"></div>',1500);
+else if(t==='time'){document.body.classList.add('gs');setTimeout(()=>document.body.classList.remove('gs'),1000);fxEl(`<div class="rg" style="${s}"></div>`,1100)}
+else fxEl(`<div class="fo" style="${s}"></div>`,600)}
+const shake=()=>{const a=$('#app');a.classList.add('sk');setTimeout(()=>a.classList.remove('sk'),450)};
+const TC={f:'#ff8a3d',i:'#7fc8e8',p:'#b06ad8',s:'#ffe066',k:'#5ad1d1'};
+const SPN={mp:['恋符「マスタースパーク」','#ffd54a','beam'],ms:['霊符「夢想封印」','#ff9ecb','rings'],lv:['禁忌「レーヴァテイン」','#e5333f','slash'],pf:['凍符「パーフェクトフリーズ」','#7fc8e8','freeze'],db:['死符「死の蝶」','#f4a6c8','petals'],ym:['夢符「夢想天生」','#ffffff','rings'],kd:['禁忌「カタディオプトリック」','#ff4d6d','rings'],ab:['魔符「弾幕の嵐」','#8ecae6','rain'],ar:['人形「人形遣い」','#9b7ede','rings'],tm:['時符「時の賭け」','#cfcfcf','time'],bo:['火符「八卦炉の暴走」','#ff7b2e','beam'],zr:['氷符「絶対零度」','#9fe3ff','freeze'],pm:['毒符「蔓延する毒」','#8ae234','rain'],ss:['星符「星屑の軌跡」','#ffe066','rain'],bj:['結界「結界の守護」','#5ad1d1','rings'],sy:['桜符「桜の心」','#ffb7d5','petals'],fu:['運命「運命の心」','#c04bd6','slash'],ih:['氷符「氷の心」','#7fc8e8','freeze']};
+const SC={チルノ:['#7fc8e8','freeze'],ルーミア:['#8a5fc0','dark'],妖夢:['#7bd88f','slash'],紫:['#b06ad8','rings'],レミリア:['#d1343f','beam'],幽々子:['#f4a6c8','petals']};
+function fxSp(e){const[c,t]=SC[e.n]||['#fff','dark'];fxQ(()=>{fxEl('<div class="dk"></div>',1500);fxBn('スペルカード宣言 '+e.sp.n,c);setTimeout(()=>fxRun(t,c),350);shake()},2000)}
+const _play=play;play=function(i){const o=B.hand[i];if(!o||B.pk||B.en<cs(o).cost)return _play(i);const s=SPN[o.id],b0=B.blk,h0=G.hp;FL=[];CUR=TC[TAG[o.id]]||'#fff';if(s)fxQ(()=>{fxBn(s[0],s[1]);fxRun(s[2],s[1])},1500);_play(i);if(B.blk>b0)FL.push({p:1,v:0,a:0,g:B.blk-b0});if(G.hp>h0)FL.push({p:1,v:0,a:0,hl:G.hp-h0});flush()};
+const _end=endTurn;endTurn=function(){const h=G.hp;FL=[];CUR='#fff';const at=alive().filter(e=>e.i[0]==='a'&&!e.frz);if(at.length&&!B.nb)bul(at);_end();if(G.hp<h)shake();flush()};
+const _fight=fight;fight=function(n,k){_fight(n,k);scale();if(G.onsen){B.es.forEach(e=>{e.hp=e.m=Math.round(e.m*1.2)});G.onsen=0}B.wx=pick(['晴れ','雨','雪','曇']);B.td=pick(['朝','昼','夕','夜']);B.log=(Q[n]?n+'「'+Q[n]+'」':'')+` 【${B.wx}・${B.td}】`;render();if(k===3){fxEl('<div class="dk"></div>',1500);fxBn(n+' 出現','#d1343f')}else fxEl('<div class="fd"></div>',500)};
+const _win=win;win=function(){_win();fxQ(()=>{fxRun('petals','#e8c468');fxBn('勝利','#d1343f')},1500)};
+const _over=over;over=function(ok){const l=G.lives;_over(ok);if(ok){fxQ(()=>{fxRun('petals','#e8c468');fxBn('異変解決','#e8c468')},1500)}else if(G.lives!==l){fxQ(()=>{fxBn('残機消費 復活！','#e8c468');fxRun('rings','#e8c468')},1500)}else{fxQ(()=>{fxEl('<div class="dk"></div>',1500);fxBn('力尽きた','#555')},1500)}};
+const EV={2:['#ffb066','petals','神社の宴会'],3:['#f4e4a6','rings','慧音の授業'],4:['#ffe066','rain','Pアイテム'],5:['#7bd88f','petals','守矢神社'],6:['#ff9ecb','rings','永遠亭']};
+const _evx=evx;evx=function(n){_evx(n);const v=EV[n];if(v){fxRun(v[1],v[0]);fxBn(v[2],v[0])}};
+const _map=map;map=function(){_map();fxEl('<div class="fd"></div>',500)};
+({chest:['petals','#ffe066'],rest:['rings','#ffb066'],shop:['flash','#8ecae6']}).constructor;
+Object.entries({chest:['petals','#ffe066'],rest:['rings','#ffb066'],shop:['flash','#8ecae6']}).forEach(([k,[t,c]])=>{const f=window[k];window[k]=function(){f();fxRun(t,c)}});
+let FL=[],CUR='#fff';const FQ=[];let fqb=0;
+function fxQ(f,ms){FQ.push([f,ms]);if(!fqb)fxN()}
+function fxN(){const x=FQ.shift();if(!x){fqb=0;return}fqb=1;x[0]();setTimeout(fxN,x[1])}
+function flush(){const L=FL;FL=[];const en=document.querySelectorAll('.en'),me=document.querySelector('.me');L.forEach((f,n)=>setTimeout(()=>{const el=f.p?me:en[f.i];if(!el)return;const r=el.getBoundingClientRect();
+const mk=(t,c,dy)=>fxEl(`<div class="dm" style="left:${r.left+r.width/2-15+R(40)-20}px;top:${r.top+dy}px;color:${c};font-size:${dmFs(t)}px${dmGl(t,c)}">${t}</div>`,1000);
+if(f.v>0){snd(f.p?'dmg':'hit');mk('-'+f.v,f.p?'#ff6b6b':f.c,0);jHit(el,f)}if(f.a>0){snd('blk');mk(f.a,'#5aa9ff',f.v>0?24:0)}if(f.g)mk('+'+f.g,'#5aa9ff',0);if(f.hl)mk('+'+f.hl,'#6bdc8b',0)},n*90))}
+const _bomb=bomb;bomb=function(){FL=[];CUR='#fff';_bomb();flush()};
+const DIFF=[{n:'Easy',t:'敵HP×1.3 攻撃×1.0',h:1.3,a:1},{n:'Normal',t:'敵HP×1.8 攻撃×1.15',h:1.8,a:1.15},{n:'Hard',t:'敵HP×2.4 攻撃×1.4',h:2.4,a:1.4},{n:'Lunatic',t:'敵HP×3.2 攻撃×1.8・残機1',h:3.2,a:1.8}];
+function scale(){const d=DIFF[G.lv==null?1:G.lv],ac=actMul(G.act);const S=mv=>mv.map(m=>m[0]==='a'?[m[0],Math.round(m[1]*d.a*ac),...m.slice(2)]:m[0]==='d'?[m[0],Math.round(m[1]*d.a*ac)]:m);B.es.forEach(e=>{e.hp=e.m=Math.round(e.m*d.h*ac);e.mv=S(e.mv);if(e.sp)e.sp={...e.sp,mv:S(e.sp.mv)};e.i=e.mv[e.k%e.mv.length]})}
+const _start=start;start=function(k){$v(`<h2>難易度</h2><div class="ch">${DIFF.map((d,i)=>`<button onclick="go('${k}',${i})"><b>${d.n}</b><br><span class="log">${d.t}</span></button>`).join('')}</div>`)};
+function go(k,i){_start(k);G.lv=i;if(i===3)G.lives=1;map()}
+const Q={妖精:'ちょっと遊んであげる',大妖精:'えっと…がんばります！',霧の湖の妖精:'ここから先は通さないよ',リグル:'虫の知らせよ',橙:'にゃーん！',ミスティア:'夜雀の歌を聴きなさい',チルノ:'あたいったら最強ね！',ルーミア:'そーなのかー',小悪魔:'パチュリー様の魔はさせません',美鈴:'ここは通しませんよ！',パチュリー:'むきゅー…本を読む魔よ',アリス:'あなたも人形にしてあげる',咲夜:'時間よ止まれ。…あら、もう動いてるの？',レミリア:'運命は私の手の中にあるわ',妖夢:'迷いなき一刀、受けてみなさい',紫:'境界を弄ぶのも悪くないわね',鈴仙:'狂気の瞳を見つめなさい',妹紅:'燃やし尽くしてあげる',幽々子:'あなたも桜の下で眠りなさい'};
+const atkName=e=>{const[k,v,t=1,x]=e.i;return k!=='a'?'':(x==='x'?'レーザー':x==='f'?'氷弾':x==='p'?'毒弾':t>=4?'弾幕':t===3?'ばら撒き弾':t===2?'二連弾':v>=15?'大玉弾':'通常弾')+'・'};
+function bul(L){const c=`hsl(${[...L[0].n].reduce((a,x)=>a+x.charCodeAt(0),0)%360},90%,65%)`,n=Math.min(40,6+L.reduce((a,e)=>a+(e.i[2]||1)*3,0));for(let i=0;i<n;i++)fxEl(`<div class="bu" style="--c:${c};left:${R(100)}%;animation-delay:${R(500)}ms"></div>`,1700)}
+const AN=['紅霧異変','紅魔館の主','春雪・永夜異変'];
+const _m2=map;map=function(){_m2();if(G.step===0&&G.ab!==G.act&&G.act<4){G.ab=G.act;fxQ(()=>fxBn(`第${G.act+1}章「${AN[G.act]}」`,'#d1343f'),1500)}};
+CH.s={n:'十六夜咲夜',hp:65,w:'gk',deck:'kt kt kt kt tz kk kk kk md md',t:'テクニカル型。戦闘に1回、時操りで敵の行動を1ターン止める'};
+Object.assign(W,{gk:['銀ナイフ','クリティカル率+20%'],ep:['メイドのエプロン','戦闘開始時ブロック+5'],wt:['懐中時計','戦闘に1回、時操りが使える'],bsk:['ボムの設計図','戦闘開始時ボム+1']});
+Object.assign(C,{
+kt:{n:'ナイフ投げ',c:1,d:{dmg:7,cr:20},u:{dmg:9},ch:'s'},
+tz:{n:'時止め',c:2,d:{fz1:1},u:{c:1},ch:'s'},
+md:{n:'メイドの務め',c:1,d:{blk:4,draw:1},u:{blk:6,draw:2},ch:'s'},
+ek:{n:'永遠の時計',c:3,d:{pw:'en',v:1},u:{c:2},ch:'s'},
+jg:{n:'ジャック・ザ・リッパー',c:2,d:{dmg:5,hits:3,cr:25},u:{dmg:7},ch:'s'},
+kdl:{n:'殺人ドール',c:3,d:{dmg:3,hits:6,rnd:1,cr:20},u:{hits:8},ch:'s'},
+pv:{n:'プライベートスクエア',c:2,d:{blk:8,wk:2,wka:1},u:{blk:11},ch:'s'},
+mi:{n:'ミスディレクション',c:1,d:{evade:1,draw:1,gz:1},u:{c:0},ch:'s'},
+sj:{n:'瀧洒な従者',c:2,d:{pw:'cr',v:15},u:{v:20},ch:'s'},
+ct:{n:'炎の連鎖',c:1,d:{tc:'f',tm:3,fire:1},u:{tm:4}},
+hr2:{n:'星の列',c:1,d:{tc:'s',tm:3},u:{tm:4}},
+ik:{n:'氷の結晶',c:1,d:{tc:'i',tm:3},u:{tm:4}},
+sn:{n:'賽銭投撲',c:1,d:{gd:10},u:{gd:6}},
+hg:{n:'氷の棺',c:2,d:{dmg:6,fb:12,fp:50},u:{dmg:8,fb:16}},
+ep2:{n:'疫病',c:1,d:{pdb:1},u:{c:0}}});
+TG.t='時';TC.t='#cfcfcf';
+tag('t','tz ek pv');tag('f','ct');tag('s','hr2');tag('i','ik hg');tag('p','ep2');
+RARE.push('ek','kdl');UNC.push('jg','pv','mi','sj','ct','hr2','ik','sn','hg','ep2');
+Object.assign(SPN,{ek:['時符「永遠の時計」','#cfcfcf','time'],kdl:['幻符「殺人ドール」','#c8c8ff','rain'],jg:['幻葬「夜霧の幻影殺人鬼」','#e5e5ff','slash']});
+Object.assign(E,{光の三妖精:{hp:36,mv:[['a',3,3],['d',6],['a',8]]},小傘:{hp:52,mv:[['a',7],['b',2],['a',5,2]]},フランドール:{hp:80,mv:[['a',7,3],['b',3],['a',16]]},輝夜:{hp:78,mv:[['a',10],['d',8],['a',6,3]]},永琳:{hp:70,mv:[['a',8,1,'p'],['d',10],['a',12]]}});
+ACT[0].N.push('光の三妖精');ACT[0].El.push('小傘');ACT[1].El.push('フランドール');ACT[2].El.push('輝夜','永琳');
+E.フランドール.sp={at:.5,n:'禁忌「レーヴァテイン」',mv:[['a',24],['a',5,5],['b',3]]};E.輝夜.sp={at:.5,n:'難題「龍の頸の玉 -五色の弾丸-」',mv:[['a',6,5],['a',18,1,'x'],['d',8]]};E.永琳.sp={at:.5,n:'天呪「アポロ13」',mv:[['a',9,3,'p'],['b',2],['a',15]]};
+Object.assign(SC,{フランドール:['#e5333f','rings'],輝夜:['#f0c8ff','rain'],永琳:['#8ae234','petals']});
+Object.assign(Q,{光の三妖精:'三人揃えば無敵よ！',小傘:'うらめしやー！驚いた？',フランドール:'あはは、壊れちゃえ！',輝夜:'永遠を前にして、人は無力ね',永琳:'あなたの症状、診断してあげる'});
+function tt(){if(!B.tt||B.pk)return;B.tt=0;alive().forEach(e=>frzSet(e,1));B.log='時操り！敵の行動を1ターン遅らせた';fxQ(()=>{fxBn('時符「時操り」','#cfcfcf');fxRun('time','#cfcfcf')},1500);render()}
+const _e2=evx;evx=function(n){if(n<7)return _e2(n);const h=head();
+if(n===7){$v(h+`<h2>紅魔館の図書館</h2><p>パチュリーの蔵書から不要な記述を消せる。削除するカードを選ぶ。</p><div class="row">${G.deck.map((c,i)=>cardEl(c,`onclick="G.deck.splice(${i},1);map()"`)).join('')}</div><button onclick="map()">立ち去る</button>`);fxBn('紅魔館の図書館','#9b7ede')}
+else if(n===8){$v(h+`<h2>迷いの竹林</h2><p>ていの気配がする。運試しになりそうだ。</p><div class="ch"><button onclick="R(2)?(G.gold+=50):(G.hp=Math.max(1,G.hp-8));map()">進む（お賽銭+50 か HP-8）</button><button onclick="map()">引き返す</button></div>`);fxBn('迷いの竹林','#7bd88f')}
+else{$v(h+`<h2>白玉楼の桜</h2><p>桜の木の下でカードを複製できる。代償はHP10。</p><div class="row">${G.deck.map((c,i)=>cardEl(c,`onclick="G.hp=Math.max(1,G.hp-10);G.deck.push({...G.deck[${i}]});map()"`)).join('')}</div><button onclick="map()">やめておく</button>`);fxBn('白玉楼の桜','#ffb7d5')}};
+const _m3=map;map=function(){_m3();try{localStorage.setItem('tdk',JSON.stringify(G))}catch(e){}};
+const _o3=over;over=function(ok){const l=G.lives;_o3(ok);if(ok||G.lives===l)try{localStorage.removeItem('tdk')}catch(e){}};
+const _t3=title;title=function(){_t3();try{const s=localStorage.getItem('tdk');if(s){const b=document.createElement('button');b.textContent='つづきから';b.className='pri';b.style.marginTop='16px';b.onclick=()=>{G=JSON.parse(s);map()};$('#app').appendChild(b)}}catch(e){}};
+W.wt=['懐中時計','時止め・時の賭け・時操りの凍結+1ターン'];W.lvw=['禁忌の杖','戦闘開始時ブロック+6'];
+CH.f={n:'フランドール・スカーレット',hp:42,w:'lvw',deck:'bz bz bz mb mb sb kk kk lv gz',t:'高火力・低HP型。狂気：戦闘中攻撃のダメージ+1'};
+Object.assign(C,{fk:{n:'フォーオブアカインド',c:2,d:{cp:2},u:{c:1},ch:'f'},qd:{n:'QED「495年の波紋」',c:3,d:{dmg:8,hits:3,all:1,fire:1},u:{dmg:11},ch:'f'}});
+TAG.qd='f';RARE.push('qd');UNC.push('fk');SPN.qd=['QED「495年の波紋」','#e5333f','rings'];
+C.ek.d={pw:'en',v:1};
+const AB={咲夜:'tm',輝夜:'tm',幽々子:'mh',紫:'gap',八雲紫:'gap',アリス:'sum',レミリア:'bl'},AT={tm:'3行動ごとに時を止める',mh:'行動ごとに最大HP-2',gap:'2行動ごとに次の手札-2',sum:'3行動ごとに人形召喚',bl:'行動ごとにHP4%回復'};
+function abil(e,log){const a=AB[e.n];if(!a||e.hp<=0)return;const n=(e.ac=(e.ac||0)+1);
+if(a==='tm'&&n%3===0){B.fz+=2;log.push(e.n+'は時を止めた！次の霊力-2')}
+else if(a==='mh'){G.mhp=Math.max(20,G.mhp-2);G.hp=Math.min(G.hp,G.mhp);log.push('最大HPが削られた')}
+else if(a==='gap'&&n%2===0){B.dn+=2;log.push('隙間：次の手札-2')}
+else if(a==='sum'&&n%3===0&&B.es.length<5){spawn('人形');log.push('人形を呼び出した')}
+else if(a==='bl')e.hp=Math.min(e.m,e.hp+Math.round(e.m*.04));else if(a==='hl')B.es.forEach(x=>{if(x.hp>0)x.hp=Math.min(x.m,x.hp+Math.round(x.m*.06))})}
+function spawn(n){const d=E[n],e={n,hp:d.hp,m:d.hp,mv:d.mv,k:0,i:d.mv[0],blk:0,str:0,frz:0,fi:0,bs:false,sp:d.sp},o=B.es;B.es=[e];scale();B.es=o.concat(B.es)}
+function tout(e,log){const d=Math.round((18+6*G.act)*DIFF[G.lv==null?1:G.lv].a);G.hp-=d;FL.push({p:1,v:d,a:0});log.push(e.n+'のスペルが時間切れ！'+d+'ダメージ');shake()}
+E.八雲紫={hp:140,mv:[['a',12],['b',3],['a',8,3],['d',14]],sp:{at:.5,n:'「深弾幕結界 -夢幻泡影-」',mv:[['a',8,4],['a',26,1,'x'],['b',3]]}};
+SC.八雲紫=['#b06ad8','rings'];Q.八雲紫='幻想郷は全てを受け入れるのよ';
+ACT[3]={n:'幻想郷の境界',len:6,N:['幽霊','鈴仙','小傘'],El:['妹紅','輝夜','永琳'],B:'八雲紫'};AN.push('幻想郷の境界');
+for(let i=4;i<40;i++)ACT[i]={...ACT[i%4]};
+const _o4=over;over=function(ok){_o4(ok);if(ok){const b=document.createElement('button');b.textContent='エンドレスモードへ';b.style.marginLeft='8px';b.onclick=()=>{G.endless=1;G.step=0;G.hp=G.mhp;map()};$('#app').appendChild(b)}};
+let AC,MUTE=0;
+function snd(k){if(MUTE)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const P={hit:[[260,.09,'square',.1,-150]],blk:[[700,.12,'sine',.12,-250]],dmg:[[140,.2,'sawtooth',.12,-80]],freeze:[[1400,.35,'sine',.08,-900]],beam:[[180,.5,'sawtooth',.08,500]],slash:[[1000,.14,'sawtooth',.08,-800]],rings:[[420,.4,'sine',.1,400]],petals:[[600,.3,'triangle',.07,200]],rain:[[900,.3,'triangle',.06,-400]],time:[[330,.6,'sine',.1,-250]],dark:[[70,.6,'sine',.15,0]],spell:[[330,.18,'sawtooth',.07,0],[495,.4,'sawtooth',.07,250]]}[k]||[];P.forEach(([f,d,ty,v,s],i)=>{const t=AC.currentTime+i*.12,o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);o.frequency.linearRampToValueAtTime(Math.max(30,f+s),t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d)})}catch(e){}}
+document.body.appendChild(Object.assign(document.createElement('button'),{id:'mu',textContent:'♪',style:'position:fixed;right:10px;bottom:10px;z-index:70;padding:4px 10px',onclick:function(){MUTE=!MUTE;this.textContent=MUTE?'×':'♪'}}));
+function deckV(){const m=document.createElement('div');m.style.cssText='position:fixed;inset:0;background:#000d;z-index:65;overflow:auto;padding:16px';const o=[...G.deck].sort((a,b)=>(TAG[a.id]||'z').localeCompare(TAG[b.id]||'z'));m.innerHTML=`<div style="max-width:860px;margin:0 auto"><button class="pri" id="dc">閉じる</button> <span class="log">デッキ${G.deck.length}枚</span><div class="row">${o.map(c=>cardEl(c)).join('')}</div></div>`;document.body.appendChild(m);m.querySelector('#dc').onclick=()=>m.remove()}
+C.lv.d={dmg:32,fire:1,enl:1};C.lv.u={dmg:42};C.qd.d={dmg:5,hits:3,all:1,fire:1,hp:4};C.qd.u={dmg:7};
+Object.assign(C,{rwc:{n:'過去を刻む時計',c:1,d:{rw:2},u:{rw:3},ch:'s'},vp:{n:'吸血鬼の渇き',c:1,d:{dmg:6,ls:.5},u:{dmg:8},ch:'f'},gg:{n:'お茶の時間',c:1,d:{heal:4,blk:4},u:{heal:6,blk:6},ch:'r'},kb:{n:'魔法のキノコ',c:1,d:{heal:5,up1:1},u:{heal:8},ch:'m'}});
+TAG.rwc='t';UNC.push('rwc','vp','gg','kb');
+AB.永琳='hl';AB.妹紅='rez';AT.hl='行動ごとに味方全体HP6%回復';AT.rez='一度だけHP30%で復活';
+function revive(){let r=0;B.es.forEach(e=>{if(e.hp<=0&&AB[e.n]==='rez'&&!e.rzd){e.rzd=1;e.hp=Math.round(e.m*.3);e.blk=0;e.frz=0;r=1;B.log+=' '+e.n+'は不死鳥の如く蘇った！';fxQ(()=>fxBn('不死「火の鳥 -鳳翼天翔-」','#ff7b2e'),1500)}});return r}
+C.rwc.ch='f';delete TAG.rwc;
+C.kr2={n:'紅茶のおかわり',c:1,d:{heal:3,hot:3},u:{heal:4,hot:4},ch:'s'};UNC.push('kr2');
+Object.assign(CH,{
+y:{n:'魂魄妖夢',hp:54,w:'rk',deck:'bz bz bz yi yi kk kk kk gz sh',t:'斬撃特化。二刀流：毎ターン最初の攻撃が1.75倍／居合：攻撃のたび攻撃+1(上限+3)'},
+re:{n:'レミリア・スカーレット',hp:62,w:'gu2',deck:'bz bz bz kk kk kk vp ft bc2 sh',t:'吸血：与ダメージの25%回復／運命：最初のターン手札+1'},
+pc:{n:'パチュリー・ノーレッジ',hp:62,w:'pa',deck:'bz bz kk kk z44 wd1 wd1 qf sh z44 ps',t:'元素：属性反応のダメージ2倍。反応のたび1枚引き（1ターン1回）・お賽銭+5（1戦闘30まで）。攻撃+1。曜日で変わる魔法'},
+al:{n:'アリス・マーガトロイド',hp:60,w:'shd',deck:'bz bz bz z30 kk kk kk sh2 sh2 sh',t:'人形遣い：初期武器の人形が毎ターン4ダメージ'},
+yu:{n:'西行寺幽々子',hp:50,w:'fan',deck:'bz bz bz ps ps kk kk kk zk zk',t:'死の香り：毎ターン敵の最大HP2%減（上限10・ボス半減）／死蝶：撃破で回復と全体ダメージ'},
+ci:{n:'チルノ',hp:44,w:'ice',deck:'iq iq iq iz iz kk kk kk iw sh',t:'凍結特化。凍結させるとブロック+2、凍結中の敵へ+2ダメージ'}});
+Object.assign(W,{gu2:['神槍グングニル','クリティカル率+30%。攻撃のダメージ+1'],hk1:['白楼剣','攻撃のダメージ+2'],yk:['八雲の扇','戦闘開始時手札+1'],shd:['上海人形','毎ターン敵に4ダメージ'],ofd:['博麗の御札','敵の強化を無効化'],bks:['弾幕の結界','戦闘開始時ブロック+10'],hrb:['博麗の鈴','戦闘開始時、敵全体に毒2']});
+Object.assign(C,{
+yi:{n:'居合『一閃』',c:1,d:{dmg:8,rt:1},u:{dmg:11},ch:'y'},
+mi2:{n:'人鬼「未来永劫斬」',c:3,d:{dmg:5,hits:6,pierce:1},u:{hits:8},ch:'y'},
+hn:{n:'半霊の盾',c:1,d:{blk:7,rt:1},u:{blk:10},ch:'y'},
+ft:{n:'運命の糸',c:1,d:{look:3,bt:1},u:{look:5},ch:'re'},
+bc2:{n:'血の契約',c:0,d:{hp:5,en:2,ex:1},u:{hp:4},ch:'re'},
+ss2:{n:'スカーレットシュート',c:2,d:{dmg:5,hits:3,ls:.5},u:{dmg:7},ch:'re'},
+wd1:{n:'七曜の魔法',c:1,d:{wd:1},u:{c:0},ch:'pc'},
+sh2:{n:'上海人形',c:1,d:{pw:'dl',v:3},u:{v:4},ch:'al'},
+hr3:{n:'蓬莱人形',c:2,d:{dmg:4,pq:2},u:{dmg:6,pq:3},ch:'al'},
+rb:{n:'首吊り蓬莱人形',c:3,d:{dmg:6,hits:4,rnd:1,pq:1},u:{hits:6},ch:'al'},
+hy:{n:'反魂蝶',c:2,d:{dmg:5,all:1,psa:3},u:{dmg:7,psa:4},ch:'yu'},
+bg:{n:'亡我郷',c:3,d:{pc:.3},u:{pc:.4},ch:'yu'},
+ik2:{n:'氷の剣',c:1,d:{dmg:5,fb:14},u:{dmg:7,fb:18}},
+sw:{n:'魂の収穫',c:1,d:{pw:'sh',v:1},u:{c:0}},
+yg:{n:'妖怪の宴',c:1,d:{gs:30,gdr:3},u:{gs:20}},
+mo1:{n:'月の光',c:1,d:{dmg:6,mo:1},u:{dmg:8}},
+su1:{n:'太陽の光',c:1,d:{dmg:6,su:1},u:{dmg:8}},
+kj:{n:'境界',c:1,d:{bd2:1},u:{c:0}},
+gk2:{n:'幻想郷の結界',c:2,d:{nb:1,ex:1},u:{c:1},ch:'r'},
+hf2:{n:'博麗の御札',c:1,d:{dbf:1,blk:4},u:{blk:7}},
+mp2:{n:'魔法の薬',c:1,d:{heal:6,cp2:1},u:{heal:9}},
+rg3:{n:'連撃の極意',c:1,d:{dmg:3,cc:4},u:{dmg:4,cc:5}},
+cu1:{n:'呢い',c:9,d:{cur:1},u:{cur:1}}});
+C.sg={n:'隙間の手',c:1,d:{rcl:1},u:{c:0}};
+[['f','炎の書'],['i','氷の書'],['p','毒の書'],['s','星の書'],['k','結界の書']].forEach(([t,n])=>{C['q'+t]={n,c:1,d:{sr:t},u:{c:0}}});
+TAG.ik2='i';TAG.hy='p';RARE.push('mi2','rb','bg','gk2');UNC.push('yi','hn','ft','bc2','ss2','wd1','sh2','hr3','hy','ik2','sw','yg','mo1','su1','kj','hf2','mp2','rg3','sg','qf','qi','qp','qs','qk');
+function wdEff(o){const w=new Date().getDay(),t=tgt();[()=>heal(5),()=>t&&frzTry(t,50),()=>t&&hit(t,calc(o.id,{dmg:8,fire:1}),0),()=>{B.blk+=8},()=>drawN(2),()=>{B.en++},()=>alive().forEach(e=>hit(e,calc(o.id,{dmg:6}),0))][w]()}
+const _p2=play;play=function(i){const pre=B.es.map(e=>e.hp>0);_p2(i);if(!document.querySelector('#app .me'))return;
+if(B.es.some(e=>e.h)){B.ca=(B.ca||0)+1;if(G.ch==='y')B.pw.atk=Math.max(B.pw.atk||0,Math.min(3,(B.pw.atk||0)+1));if(G.ch==='re'&&B.dd)heal(Math.floor(B.dd*.25));if(B.ca===3){drawN(1);B.log+=' コンボ！1枚引く'}}
+const n=B.es.filter((e,k)=>pre[k]&&e.hp<=0&&!e.dz).length;B.es.forEach(e=>{if(e.hp<=0)e.dz=1});if(n){if(B.pw.sh)B.en+=B.pw.sh*n;if(G.ch==='yu'&&alive().length){heal(3*n);alive().forEach(e=>hit(e,6*n,0))}}
+if(!alive().length)return win();render()};
+function abil(e,log){const a=AB[e.n];if(!a||e.hp<=0)return;const n=(e.ac=(e.ac||0)+1);
+if(a==='tm'&&n%3===0){B.fz+=2;log.push(e.n+'は時を止めた！次の霊力-2')}
+else if(a==='mh'){G.mhp=Math.max(20,G.mhp-2);G.hp=Math.min(G.hp,G.mhp);log.push('最大HPが削られた')}
+else if(a==='gap'&&n%2===0){B.dn+=2;log.push('次の手札-2')}
+else if(a==='sum'&&n%3===0&&B.es.length<5){spawn('人形');log.push('人形を呼び出した')}
+else if(a==='bl')e.hp=Math.min(e.m,e.hp+Math.round(e.m*.04));
+else if(a==='hl')B.es.forEach(x=>{if(x.hp>0)x.hp=Math.min(x.m,x.hp+Math.round(x.m*.06))});
+else if(a==='cur'&&n%3===0){B.draw.splice(R(B.draw.length+1),0,{id:'cu1',g:1});log.push('呢いを押し付けた')}
+else if(a==='sf')e.hp=Math.max(1,e.hp-Math.round(e.m*.05));
+else if(a==='rnd')e.k=R(e.mv.length)-1}
+Object.assign(E,{早苗:{hp:68,mv:[['a',9],['a',6,2],['b',2]]},霊烏路空:{hp:75,mv:[['a',16,1,'x'],['b',3]]},古明地こいし:{hp:60,mv:[['a',8],['a',5,3],['d',8],['b',2]]},八雲藍:{hp:80,mv:[['a',10],['d',10],['a',7,3]]}});
+ACT[2].El.push('早苗');ACT[3].El.push('霊烏路空','古明地こいし','八雲藍');
+E.早苗.sp={at:.5,n:'風祝「風神の扇」',mv:[['a',8,4],['a',14],['b',2]]};E.霊烏路空.sp={at:.5,n:'核熱「核融合」',mv:[['a',28,1,'x'],['b',3]]};E.古明地こいし.sp={at:.5,n:'無意識「弾幕のローズ」',mv:[['a',5,5],['a',9,3],['d',8]]};E.八雲藍.sp={at:.5,n:'式神「八雲藍」',mv:[['a',9,4],['b',3],['a',20]]};
+Object.assign(SC,{早苗:['#7bd88f','petals'],霊烏路空:['#ff7b2e','beam'],古明地こいし:['#ff9ecb','rain'],八雲藍:['#e8c468','rings']});
+Object.assign(Q,{早苗:'奇跡を起こしてみせます！',霊烏路空:'うにゅ！核融合の力、見せてあげる',古明地こいし:'あれ、いつの間にいたのかな？',八雲藍:'紫様の前に、まず私が相手だ'});
+Object.assign(AB,{小傘:'cur',早苗:'gap',霊烏路空:'sf',古明地こいし:'rnd'});Object.assign(AT,{cur:'3行動ごとに呢いを押し付ける',sf:'行動ごとに自傷(最大HP5%)',rnd:'行動がランダム'});
+const _e3=evx;evx=function(n){if(n<10)return _e3(n);const h=head();
+if(n===10){$v(h+`<h2>神社のおみくじ</h2><p>運試し。</p><div class="ch"><button onclick="omi()">引く</button><button onclick="map()">やめる</button></div>`);fxBn('神社のおみくじ','#ffb7d5')}
+else if(n===11){$v(h+`<h2>河童の取引</h2><p>交換するカードを選ぶ。ランダムなカードと取り替えてくれる。</p><div class="row">${G.deck.map((c,i)=>cardEl(c,`onclick="G.deck[${i}]={id:pick(pool())};map()"`)).join('')}</div><button onclick="map()">断る</button>`);fxBn('河童の取引','#5ad1d1')}
+else if(n===12){$v(h+`<h2>地底の温泉</h2><p>HPを40%回復できるが、次の戦闘の敵が少し強くなる。</p><div class="ch"><button onclick="heal(Math.ceil(G.mhp*.4));G.onsen=1;map()">入る</button><button onclick="map()">通り過ぎる</button></div>`);fxBn('地底の温泉','#ff9e6b')}
+else{$v(h+`<h2>月の都</h2><p>月の民が、HP12と引き換えに武器をくれるという。</p><div class="ch"><button onclick="G.hp-=12;getWS(pick(wpool()));map()" ${G.hp<=12||!wpool().length?'disabled':''}>受け取る（HP-12）</button><button onclick="map()">断る</button></div>`);fxBn('月の都','#cfd8ff')}};
+function omi(){const r=R(3);if(r===0){G.bless=1;G.msg='大吉！次の戦闘で攻撃+2'}else if(r===1){G.gold+=30;G.msg='中吉。お賽銭+30'}else{G.deck.push({id:'cu1'});G.msg='凶…デッキに呢いが入った（削除は休憩所・図書館・商店で）'}$v(head()+`<p>${G.msg}</p><button onclick="map()">進む</button>`)}
+function rmR(){$v(head()+`<h2>削除するカード</h2><div class="row">${G.deck.map((c,i)=>cardEl(c,`onclick="G.deck.splice(${i},1);map()"`)).join('')}</div><button onclick="rest()">戻る</button>`)}
+document.addEventListener('keydown',e=>{if(!document.querySelector('#app .me'))return;if(e.key==='Enter')endTurn();else if(/^[1-9]$/.test(e.key))play(+e.key-1)});
+const _o5=over;over=function(ok){const l=G.lives;_o5(ok);if(ok||G.lives===l)try{const h=JSON.parse(localStorage.getItem('tdh')||'[]');h.unshift({c:CH[G.ch].n,w:ok?'クリア':'敗北',a:G.act+1,s:G.step,d:G.deck.length,l:DIFF[G.lv==null?1:G.lv].n});localStorage.setItem('tdh',JSON.stringify(h.slice(0,10)))}catch(e){}};
+const _t4=title;title=function(){_t4();try{const h=JSON.parse(localStorage.getItem('tdh')||'[]');if(h.length)$('#app').insertAdjacentHTML('beforeend',`<h2>ラン履歴</h2><div class="log">${h.slice(0,5).map(r=>`${r.w} ${r.c} ${r.l} ${r.a}章${r.s} デッキ${r.d}枚`).join('<br>')}</div>`)}catch(e){}};
+DIFF.push({n:'Extra',t:'敵HP×4.5 攻撃×2.2・残機0',h:4.5,a:2.2});
+function go(k,i){_start(k);G.lv=i;G.lives=i===3?1:i===4?0:2;map()}
+function ach(n){try{const a=JSON.parse(localStorage.getItem('tda')||'[]');if(!a.includes(n)){a.push(n);localStorage.setItem('tda',JSON.stringify(a));fxQ(()=>fxBn('実績解除：'+n,'#e8c468'),1500)}}catch(e){}}
+const _p3=play;play=function(i){_p3(i);if(document.querySelector('#app .me')&&B&&B.es)G.dm=(G.dm||0)+(B.dd||0)};
+const _w4=win;win=function(){if(B&&B.es&&B.es.every(e=>e.hp<=0)){G.tn=(G.tn||0)+(B.hh||[]).length;if(B.kind===3&&!B.tk)ach('ノーダメージでボス撃破')}_w4()};
+const _o6=over;over=function(ok){const l=G.lives;_o6(ok);if(ok||G.lives===l){if(ok){ach('異変解決');ach(CH[G.ch].n+'でクリア');if(G.lv>=3)ach('Lunatic以上でクリア');if(G.lives>=2)ach('残機を失わずにクリア')}$('#app').insertAdjacentHTML('beforeend',`<p class="log">ターン数${G.tn||0}　与ダメージ${G.dm||0}　お賽銭${G.gold}　デッキ${G.deck.length}枚　残機${G.lives}</p>`)}};
+const _t5=title;title=function(){_t5();try{const a=JSON.parse(localStorage.getItem('tda')||'[]');if(a.length)$('#app').insertAdjacentHTML('beforeend',`<h2>実績 (${a.length})</h2><div class="log">${a.join(' / ')}</div>`)}catch(e){}};
+// ---- バランス調整 ----
+const WMAX=Infinity;
+const EXH={xs:300,xk:400,xh:500};
+Object.assign(W,{xs:['八意印の薬箱','毎ターン開始時HP3回復'],xk:['銀の投げナイフ箱','攻撃のダメージ+2・クリティカル率+15%'],xh:['蓬莱の玉の枝','毎ターン開始時ブロック+5・戦闘開始時に敵全体へ毒5']});
+function addW(k){G.w.push(k);if(k==='dgF'){G.mhp=Math.max(10,G.mhp-10);G.hp=Math.min(G.hp,G.mhp)}return null}
+const actMul=a=>{let s=1;for(let i=0;i<a;i++)s+=[.12,.2,.3][Math.min(2,Math.floor(i/4))];return s};
+const restRate=()=>{const l=Math.floor((G.act||0)/4);return l>=2?.1:l===1?.2:.3};
+const pr=b=>Math.round(b*(1+.1*(G.act||0))/5)*5;
+const rmCost=()=>G.rc!=null?G.rc:(G.rm||0)*25;
+function doRm(i){const c=rmCost();G.gold-=c;G.rc=c+(G.act>=2?50:25);G.rm=(G.rm||0)+1;G.deck.splice(i,1);shopV()}
+function buyX(){const k=G.sh.x;G.gold-=pr(EXH[k]);getWS(k);G.sh.x=null;shopV()}
+function exhInit(){if(G.ch==='pc')B.pw.atk=(B.pw.atk||0)+1;if(has('xk')){B.pw.atk=(B.pw.atk||0)+2;B.pw.cr=(B.pw.cr||0)+15}if(has('xs'))B.pw.rg=(B.pw.rg||0)+3;if(has('xh')){B.pw.tb=(B.pw.tb||0)+5;B.es.forEach(e=>e.p=(e.p||0)+5)}
+if(has('dgA')){B.pw.atk=(B.pw.atk||0)+4;G.hp=Math.max(1,G.hp-8)}
+if(has('dgB'))B.pw.dl=(B.pw.dl||0)+4;
+if(has('dgC')){B.pw.en=(B.pw.en||0)+1;B.pw.dr=(B.pw.dr||0)-2}
+if(has('dgD')){B.pw.dr=(B.pw.dr||0)+2;for(let j=0;j<3;j++)B.draw.splice(R(B.draw.length+1),0,{id:'cu1',g:1})}
+if(has('dgE')){B.pw.atk=(B.pw.atk||0)+3;B.pw.cr=(B.pw.cr||0)+20;B.es.forEach(e=>e.str+=2)}
+if(has('dgF'))B.es.forEach(e=>{if(!e.bs)frzSet(e,2)});
+if(has('dgG'))B.pw.fire=(B.pw.fire||0)+1;
+if(has('dgH')){B.pw.tb=(B.pw.tb||0)+8;B.pw.dr=(B.pw.dr||0)-1}}
+// ---- 代償つき武器 ----
+const DGW={dgA:1,dgB:1,dgC:1,dgD:1,dgE:1,dgF:1,dgG:1,dgH:1};
+Object.assign(W,{
+dgA:['鬼神の大盃','攻撃+4／代償：戦闘開始時HP-8'],
+dgB:['呪詛の藁人形','毎ターン敵に4ダメージ／代償：毎ターン開始時HP-2'],
+dgC:['時計仕掛けの心臓','毎ターン霊力+1／代償：毎ターン引く枚数-2'],
+dgD:['禁じられた魔本','毎ターン引く枚数+2／代償：戦闘開始時に山札へ呪い3枚'],
+dgE:['狂乱の面','攻撃+3・クリティカル率+20%／代償：敵の攻撃力+2'],
+dgF:['凍てつく契約','戦闘開始時、ボス以外の敵全体を2ターン凍結／代償：取得時最大HP-10'],
+dgG:['暴走する八卦炉','火属性ダメージ+100%／代償：毎ターン開始時HP-2'],
+dgH:['鉄の聖櫃','毎ターン開始時ブロック+8／代償：毎ターン引く枚数-1']});
+const _turnDG=turn;turn=function(first){const c=(has('dgB')?2:0)+(has('dgG')?2:0);if(c&&B&&B.es&&G.hp>0)G.hp=Math.max(1,G.hp-c);_turnDG(first)};
+
+// ---- キャラ専用カード ----
+Object.assign(C,{
+z01:{n:'博麗アミュレット',c:1,d:{dmg:4,blk:4},u:{dmg:5,blk:6},ch:'r'},
+z02:{n:'八方鬼縛陣',c:2,d:{dmg:4,all:1,wk:2,wka:1},u:{dmg:6,wk:3},ch:'r'},
+z03:{n:'巫女の勘',c:0,d:{look:2},u:{look:3},ch:'r'},
+z04:{n:'破魔の札',c:1,d:{dmg:5,dbf:1},u:{dmg:7},ch:'r'},
+z05:{n:'結界砲',c:2,d:{blk:6,bd:1},u:{blk:9},ch:'r'},
+z06:{n:'星屑の台風',c:2,d:{dmg:2,hits:4,all:1},u:{dmg:3},ch:'m'},
+z07:{n:'流星群',c:3,d:{dmg:4,hits:5,rnd:1,fire:1},u:{dmg:5},ch:'m'},
+z08:{n:'止めの魔砲',c:2,d:{dmg:8,fire:1,lo:10},u:{dmg:10,lo:12},ch:'m'},
+z09:{n:'魔符「ミルキーウェイ」',c:1,d:{dmg:2,hits:3,rnd:1,draw:1},u:{dmg:3},ch:'m'},
+z10:{n:'ナイフの雨',c:2,d:{dmg:3,hits:4,rnd:1,cr:25},u:{dmg:4},ch:'s'},
+z11:{n:'巻き戻しの針',c:1,d:{rw:1,draw:1},u:{rw:2},ch:'s'},
+z12:{n:'幻世「ザ・ワールド」',c:3,d:{fz1:1,nx:1,en:2},u:{c:2},ch:'s'},
+z13:{n:'幻惑ミスディレクション',c:1,d:{wk:1,wka:1,draw:1,gz:1},u:{wk:2},ch:'s'},
+z14:{n:'禁忌「恋の迷路」',c:2,d:{dmg:3,hits:5,rnd:1,fire:1,hp:3},u:{dmg:4},ch:'f'},
+z15:{n:'きゅっとしてドカーン！',c:3,d:{dmg:10,rp:40,hp:6},u:{dmg:14},ch:'f'},
+z16:{n:'狂気の再演',c:1,d:{rcl:1,dmg:4},u:{dmg:6},ch:'f'},
+z17:{n:'禁忌「カゴメカゴメ」',c:1,d:{dmg:8,hits:2,fire:1,ex:1},u:{dmg:11},ch:'f'},
+z18:{n:'六道剣の連斬',c:2,d:{dmg:6,hits:3,pierce:1},u:{dmg:8},ch:'y'},
+z19:{n:'断迷剣「迷津慈航斬」',c:3,d:{dmg:24,pierce:1,rt:1},u:{dmg:32},ch:'y'},
+z20:{n:'半霊の囁き',c:0,d:{draw:1,blk:3},u:{blk:5},ch:'y'},
+z21:{n:'獄界剣「二百由旬の一閃」',c:2,d:{dmg:14,pierce:1,rt:1},u:{dmg:18},ch:'y'},
+z22:{n:'紅符の弾幕',c:2,d:{dmg:6,hits:2,all:1},u:{dmg:8},ch:'re'},
+z23:{n:'紅魔「スカーレットデビル」',c:3,d:{dmg:12,all:1,ls:.4,hp:6},u:{dmg:16},ch:'re'},
+z24:{n:'血の盃',c:1,d:{dmg:5,ls:1},u:{dmg:7},ch:'re'},
+z25:{n:'蝙蝠の群れ',c:1,d:{dmg:2,hits:3,rnd:1,ls:.5},u:{dmg:3},ch:'re'},
+z26:{n:'日符「ロイヤルフレア」',c:2,d:{dmg:8,all:1,fire:1,su:1},u:{dmg:10},ch:'pc'},
+z27:{n:'月符「サイレントセレナ」',c:2,d:{dmg:8,all:1,mo:1},u:{dmg:10},ch:'pc'},
+z28:{n:'賢者の石',c:3,d:{dmg:10,all:1,psa:2,fire:1},u:{dmg:13,psa:3},ch:'pc'},
+z29:{n:'元素融合',c:1,d:{psn:3,fp:50,draw:1},u:{psn:5,fp:65},ch:'pc'},
+z30:{n:'人形劇の幕開け',c:1,d:{dmg:3,pq:1,blk:3},u:{dmg:4,blk:5},ch:'al'},
+z31:{n:'魔操「リターンイナニメトネス」',c:3,d:{dmg:8,all:1,pq:2},u:{dmg:11},ch:'al'},
+z32:{n:'アリスの舞台',c:2,d:{pw:'dl',v:2,blk:6},u:{v:3},ch:'al'},
+z33:{n:'魔法糸の罠',c:1,d:{wk:2,wka:1,pq:1},u:{wk:3},ch:'al'},
+z34:{n:'桜符「完全なる墨染の桜」',c:3,d:{dmg:12,all:1,psa:4,heal:4},u:{dmg:16,psa:6},ch:'yu'},
+z35:{n:'亡霊の手招き',c:1,d:{psn:6,heal:2},u:{psn:9},ch:'yu'},
+z36:{n:'西行妖の呼び声',c:2,d:{pc:.2,psa:2},u:{pc:.25},ch:'yu'},
+z37:{n:'彼岸の花',c:1,d:{blk:6,psa:2},u:{blk:8,psa:3},ch:'yu'},
+z38:{n:'雪符「ダイヤモンドブリザード」',c:2,d:{dmg:5,all:1,fp:50},u:{dmg:7,fp:65},ch:'ci'},
+z39:{n:'冷たい晩餐',c:1,d:{dmg:3,fp:60,blk:3},u:{dmg:4,blk:5},ch:'ci'},
+z40:{n:'氷塊「グレートクラッシャー」',c:3,d:{dmg:8,all:1,fb:12},u:{dmg:10,fb:16},ch:'ci'},
+z41:{n:'あたいったら最強ね！',c:1,d:{pw:'fi',v:3,blk:4},u:{v:4,blk:6},ch:'ci'},
+z42:{n:'氷精の悪戯',c:0,d:{fz1:1,enl:1},u:{enl:0},ch:'ci'},
+z43:{n:'かき氷',c:1,d:{heal:5,blk:3},u:{heal:7,blk:5},ch:'ci'}});
+tag('k','z01 z02 z05');tag('s','z06 z09');tag('f','z07 z08 z14 z17 z26 z28');tag('t','z11 z12 z13');
+tag('i','z27 z29 z38 z39 z40 z41 z42 z43');tag('p','z34 z35 z36 z37');
+RARE.push('z07','z12','z15','z19','z23','z28','z31','z34','z40');
+UNC.push('z02','z04','z05','z06','z08','z09','z10','z11','z13','z14','z17','z18','z21','z22','z24','z26','z27','z29','z30','z32','z35','z36','z37','z38','z39','z41');
+Object.assign(SPN,{z07:['流星群','#ffe066','rain'],z12:['幻世「ザ・ワールド」','#cfcfcf','time'],z15:['きゅっとしてドカーン！','#e5333f','rings'],z19:['断迷剣「迷津慈航斬」','#7bd88f','slash'],z23:['紅魔「スカーレットデビル」','#c1121f','dark'],z28:['金木水火土符「賢者の石」','#ff7b2e','beam'],z31:['魔操「リターンイナニメトネス」','#9b7ede','rings'],z34:['桜符「完全なる墨染の桜」','#ffb7d5','petals'],z40:['氷塊「グレートクラッシャー」','#9fe3ff','freeze']});
+// ---- 図鑑・遊び方 ----
+let CX=null;
+function cxLoad(){if(CX)return CX;try{CX=JSON.parse(localStorage.getItem('tdz')||'null')}catch(e){}if(!CX||typeof CX!=='object')CX={};CX.c=CX.c||{};CX.w=CX.w||{};CX.s=CX.s||{};return CX}
+function cxSave(){try{localStorage.setItem('tdz',JSON.stringify(CX))}catch(e){}}
+function cxSeen(t,id){if(!id)return;const x=cxLoad();if(!x[t][id]){x[t][id]=1;cxSave()}}
+const SYN=[
+['steam','蒸気反応','火と氷が出会うと、何かが起きる…','凍結中の敵に火属性の攻撃を当てると、追加で6ダメージ（パチュリーは2倍）。'],
+['boom','毒の爆発','毒に炎を近づけると…','毒状態の敵に火属性の攻撃を当てると、毒の2倍のダメージで爆発し、毒が消える。'],
+['venom','猛毒化','氷と毒の相性は…','毒状態の敵に氷属性のカードを使うと、毒が+3される（パチュリーは+6）。'],
+['combo','コンボドロー','攻撃を途切れさせずに当て続けると…','1ターンに3回攻撃を当てると、カードを1枚引ける。'],
+['yomu','剣気の蓄積','妖夢の戦い方は積み重ね…','妖夢は攻撃を当てるたびに攻撃力+1（最大+8）。戦闘が終わるまで残る。'],
+['vamp','吸血鬼の本能','紅い悪魔は傷を癒やす…','レミリアは与えたダメージの25%を回復する。吸血系のカードと重ねると回復量が伸びる。'],
+['yuyu','死者の宴','幽々子が敵を倒すと…','幽々子は敵を倒すたびHP+3、生き残った敵に6ダメージ。複数の敵がいる戦闘で連鎖する。'],
+['cirno','氷結の加護','チルノの本領は凍結にあり…','チルノは敵を凍結させるとブロック+4。凍結中の敵へのダメージも増える。'],
+['doll','人形の糸','人形が戦場にいる時、糸を引くと…','人形（毎ターンダメージ）を出した状態で糸系のカードを使うと、人形のダメージ分が追加される。'],
+['weather','天気の相性','空模様を味方につけると…','晴れは火属性+25%、雨は氷属性+25%（逆の天気では弱まる）。天気は戦闘開始時に決まる。'],
+['daynight','昼夜の使い分け','お日様とお月様…','日符は昼に、月符は夜に使うとダメージ2倍。時間帯は戦闘開始時に決まる。'],
+['star','星の恵み','星の力を重ねると手札が回る…','「星カードを使うたびに引く」パワーを出すと、星カードを使い続けて手札を回せる。'],
+['flame','炎の連鎖','火の力を溜めると…','「火カードを使うたびに敵全体へダメージ」のパワーで、火カードが全体攻撃にもなる。'],
+['fortress','結界の力','守りがそのまま攻めになる…','ブロックが10以上あると攻撃力が上がるパワーがある。守りを固めてから攻撃する。'],
+['rewind','時の巻き戻し','時間を遡れば傷も消える…','巻き戻し系のカードは、1〜2ターン前のHPまで回復できる。'],
+['cold','凍結連携','凍った敵は脆い…','凍結中の敵に追加ダメージを与えるカードがある。凍結カードと組み合わせる。'],
+['gold','賽銭の力','お賽銭は武器にもなる…','お賽銭の量に応じてダメージを与えるカードがある。お賽銭は商店だけでなく火力にもなる。'],
+['kill','即死','HPが低い敵には…','敵のHPが一定以下なら即死させるカードがある（ボス除く）。'],
+['exhaust','消滅','切り札は使い捨て…','「消滅」のカードは、使うとその戦闘中は二度と使えない。'],
+['retain','保持','温存しておく手…','「保持」のカードは、ターン終了時に手札へ残る。大技を溜めておける。'],
+['curse','代償の契約','強い力には代価がつきもの…','代償つきの武器は強力だが、HPや手札など何かを犠牲にする。デッキと相談して選ぶ。'],
+['exh','展示品','商店の奥には特別な品が…','商店には時々、高額な「展示品」（特別な武器）が並ぶ。展示品は商店でしか手に入らない。']
+];
+function synUnlock(id){const x=cxLoad();if(x.s[id])return;x.s[id]=1;cxSave();const a=SYN.find(v=>v[0]===id);try{fxQ(()=>fxBn('シナジー発見：'+a[1],'#e8c468'),1500)}catch(e){}}
+function synChk(o,h0,pre){const c=cs(o),d=c.d,tg=TAG[o.id],f=d.fire||tg==='f',lg=B.log||'',U=synUnlock,al=B.es.filter(e=>e.hp>0);
+if(lg.includes('蒸気'))U('steam');if(lg.includes('爆発'))U('boom');if(lg.includes('猛毒'))U('venom');if(lg.includes('コンボ'))U('combo');if(lg.includes('即死'))U('kill');
+if(G.ch==='y'&&(B.pw.atk||0)>=2&&(B.ca||0)>=2)U('yomu');
+if(G.ch==='re'&&G.hp>h0&&B.dd>0&&!d.heal&&!d.ls)U('vamp');
+if(G.ch==='yu'&&al.length&&pre.filter(Boolean).length>al.length)U('yuyu');
+if(G.ch==='ci'&&al.some(e=>e.frz>0))U('cirno');
+if(d.pq&&(B.pw.dl||0)>0)U('doll');
+if(d.dmg&&((f&&B.wx==='晴れ')||(tg==='i'&&B.wx==='雨')))U('weather');
+if((d.mo&&B.td==='夜')||(d.su&&B.td==='昼'))U('daynight');
+if(tg==='s'&&(B.pw.sd||0)>0)U('star');
+if(tg==='f'&&(B.pw.fb||0)>0)U('flame');
+if(d.dmg&&(B.pw.bk||0)>0&&B.blk>=10)U('fortress');
+if(d.rw&&G.hp>h0)U('rewind');
+if(d.fb&&al.some(e=>e.frz>0))U('cold');
+if(d.gd&&G.gold>=100)U('gold');
+if(d.ex)U('exhaust')}
+function cxScan(){if(!G)return;(G.w||[]).forEach(k=>{cxSeen('w',k);if(DGW[k])synUnlock('curse');if(EXH[k])synUnlock('exh')});if(G.sh){cxSeen('w',G.sh.w);cxSeen('w',G.sh.x);if(G.sh.x)synUnlock('exh')}}
+const _playCX=play;play=function(i){const o=B&&B.hand?B.hand[i]:null,h0=G.hp,pre=B&&B.es?B.es.map(e=>e.hp>0):[];_playCX(i);try{if(o&&B.hand[i]!==o)synChk(o,h0,pre)}catch(e){}};
+const _endCX=endTurn;endTurn=function(){try{if(B.hand.some(o=>cs(o).d.rt))synUnlock('retain')}catch(e){}_endCX()};
+
+let CXS={tab:'c',grp:'*',up:{}};
+const cxGroups=()=>[['*','共通'],...Object.entries(CH).map(([k,c])=>[k,c.n])];
+const cxIds=g=>Object.keys(C).filter(k=>(C[k].ch||'*')===g&&!C[k].d.cur);
+const cxBtn=(on,act,t)=>`<button ${on?'style="border-color:var(--gold);color:var(--gold)"':''} onclick="${act}">${t}</button>`;
+function cxOpen(t){CXS.tab=t;cxDraw()}
+function cxUp(id){CXS.up[id]=!CXS.up[id];cxDraw(1)}
+function cxGrp(g){CXS.grp=g;cxDraw()}
+function cxClose(){const m=document.getElementById('cxo');if(m)m.remove()}
+function cxTotals(){const x=cxLoad(),ac=Object.keys(C).filter(k=>!C[k].d.cur),aw=Object.keys(W);return{c:[ac.filter(k=>x.c[k]).length,ac.length],w:[aw.filter(k=>x.w[k]).length,aw.length],s:[SYN.filter(a=>x.s[a[0]]).length,SYN.length]}}
+function cxCardsHTML(){const x=cxLoad(),ord=k=>({r:0,u:1,c:2})[RA(k)]*100+C[k].c;return cxIds(CXS.grp).sort((a,b)=>ord(a)-ord(b)).map(k=>{window.__cxq=1;try{const h=cardEl({id:k,up:CXS.up[k]?1:0},`onclick="cxUp('${k}')"`);return x.c[k]?h:h.replace('class="card ','class="card nw ')}finally{window.__cxq=0}}).join('')}
+function cxWeaponsHTML(){const x=cxLoad(),gr=k=>EXH[k]?'展示品（商店専用）':DGW[k]?'代償つき':'通常',gs=['通常','代償つき','展示品（商店専用）'];return gs.map(g=>{const ks=Object.keys(W).filter(k=>gr(k)===g);return`<h3 style="margin:14px 0 4px">${g} ${ks.filter(k=>x.w[k]).length}/${ks.length}</h3>`+ks.map(k=>x.w[k]?`<div style="padding:6px 10px;background:var(--pn);border-left:3px solid var(--gold);margin:4px 0"><b>${W[k][0]}</b><br><span class="log">${W[k][1]}</span></div>`:'<div style="padding:6px 10px;background:var(--pn);border-left:3px solid var(--ln);margin:4px 0"><b>？？？</b><br><span class="log">未発見</span></div>').join('')}).join('')}
+const MAN=`<h3>目的</h3><p>4つの章（博麗神社〜霧の湖／魔法の森〜紅魔館／白玉楼〜永遠亭／幻想郷の境界）を進み、各章のボス（ルーミア・レミリア・幽々子・八雲紫）を倒すとクリア。クリア後はエンドレスモードに挑戦できる。</p>
+<h3>戦闘</h3><p>毎ターン霊力3、手札5枚。カードは霊力を消費して使う。ターンを終えると敵が行動し、敵の頭上に次の行動が表示される。ブロックは毎ターン消える。</p>
+<h3>カード</h3><p>☆はアンコモン、★はレア。火・氷・毒・星・結界・時の属性があり、組み合わせると反応する。「消滅」は戦闘中1回だけ、「保持」はターン終了後も手札に残る。キャラ専用カードは、そのキャラでしか手に入らない。</p>
+<h3>マップ</h3><p>章ごとに枝分かれする地図がある。光っている地点から次の地点を選び、一本道になることもある。戦・強（エリート）・宝・休・店・？がある。？は戦闘・商店・宝箱になることもあり、イベントが続くほど戦闘になりやすい。エリートは強いが武器などの報酬が良く、序盤の階層には出ない。通常戦闘に勝つとHPが少し回復する。</p>
+<h3>休憩所</h3><p>HP回復、カードの強化、カードの削除から1つを選ぶ。エンドレスでは回復量が下がる（5〜8章は20%、9章以降は10%）。</p>
+<h3>商店とお賽銭</h3><p>お賽銭でカード・武器・展示品を買い、カードを削除できる。物価は章ごとに+10%。削除は回数に応じて高くなる（3章以降は上がり方が増える）。お賽銭は999が上限。</p>
+<h3>武器</h3><p>持っている間ずっと効く装備。個数に上限はない。代償つき武器は強力だが、何かを犠牲にする。</p>
+<h3>残機と難易度</h3><p>倒れると残機を1つ消費し、HP50%で復活する。難易度はEasy / Normal / Hard / Lunatic / Extra。上げるほど敵が強く、残機が減る。</p>
+<h3>演出</h3><p>ダメージ表示の大きさ、敵のやられ演出、属性反応・コンボ・お賽銭獲得のエフェクトと効果音がある。タイトル画面の「演出」ボタンでON/OFFできる。</p>
+<h3>図鑑</h3><p>カードは最初から全て見られる（まだ見ていないカードは薄く表示）。武器は手に入れる（または商店で見る）まで効果が伏せられる。記録はこの端末のブラウザに保存される。</p>`;
+function cxSynHTML(){const x=cxLoad();return SYN.map(a=>x.s[a[0]]?`<div style="padding:6px 10px;background:var(--pn);border-left:3px solid var(--gold);margin:4px 0"><b>${a[1]}</b><br><span class="log">${a[3]}</span></div>`:`<div style="padding:6px 10px;background:var(--pn);border-left:3px solid var(--ln);margin:4px 0"><b>？？？</b><br><span class="log">ヒント：${a[2]}</span></div>`).join('')}
+function cxDraw(keep){let m=document.getElementById('cxo');if(!m){m=document.createElement('div');m.id='cxo';m.style.cssText='position:fixed;inset:0;background:#000e;z-index:65;overflow:auto;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px))';document.body.appendChild(m)}
+const st=m.scrollTop,t=cxTotals(),tab=CXS.tab;let body='';
+if(tab==='c')body=`<div class="row">${cxGroups().map(([g,n])=>{const a=cxIds(g),x=cxLoad();return cxBtn(g===CXS.grp,`cxGrp('${g}')`,`${n} ${a.filter(k=>x.c[k]).length}/${a.length}`)}).join('')}</div><p class="log">タップで強化後を表示。薄いカードはまだ見ていないカード。</p><div class="row">${cxCardsHTML()}</div>`;
+else if(tab==='w')body=cxWeaponsHTML();
+else body=`<h2>遊び方</h2>${MAN}<h2>シナジー・仕組み ${t.s[0]}/${t.s[1]}</h2><p class="log">プレイ中に条件を満たすと解放される。</p>${cxSynHTML()}`;
+m.innerHTML=`<div style="max-width:860px;margin:0 auto"><div class="row" style="margin-top:0"><button class="pri" onclick="cxClose()">閉じる</button>${cxBtn(tab==='c','cxOpen(\'c\')',`カード ${t.c[0]}/${t.c[1]}`)}${cxBtn(tab==='w','cxOpen(\'w\')',`武器 ${t.w[0]}/${t.w[1]}`)}${cxBtn(tab==='m','cxOpen(\'m\')','遊び方・シナジー')}</div>${body}</div>`;m.scrollTop=keep?st:0}
+const _tCX=title;title=function(){_tCX();try{const t=cxTotals(),p=document.querySelector('#app p.log');if(p)p.insertAdjacentHTML('afterend',`<div class="row"><button onclick="cxOpen('c')">図鑑（カード ${t.c[0]}/${t.c[1]}・武器 ${t.w[0]}/${t.w[1]}）</button><button onclick="cxOpen('m')">遊び方・シナジー（${t.s[0]}/${t.s[1]}）</button></div>`)}catch(e){}};
+// ---- パチュリー専用カード追加 ----
+Object.assign(C,{
+z44:{n:'火符「アグニシャイン」',c:1,d:{dmg:8,fire:1},u:{dmg:10},ch:'pc'},
+z45:{n:'水符「プリンセスウンディネ」',c:1,d:{dmg:4,fp:60,draw:1},u:{dmg:6},ch:'pc'},
+z46:{n:'木符「シルフィホルン」',c:0,d:{dmg:2,draw:1},u:{dmg:3},ch:'pc'},
+z47:{n:'金符「メタルファティーグ」',c:1,d:{blk:7,dmg:3},u:{blk:10,dmg:4},ch:'pc'},
+z48:{n:'叡智の蓄積',c:2,d:{pw:'dr',v:1},u:{c:1},ch:'pc'},
+z49:{n:'稀覯本の取引',c:1,d:{gold:20,draw:1},u:{gold:30},ch:'pc'}});
+tag('f','z44');tag('i','z45');
+UNC.push('z45','z46','z48','z49');
+
+// ---- 演出 ----
+let JUICE=(()=>{try{const v=localStorage.getItem('tdj');if(v!==null)return v==='1'}catch(e){}try{return !matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return true}})();
+function juiceToggle(b){JUICE=!JUICE;try{localStorage.setItem('tdj',JUICE?'1':'0')}catch(e){}if(b)b.textContent='演出：'+(JUICE?'ON':'OFF')}
+const dmFs=t=>{const v=Math.abs(parseInt(t))||0;return JUICE?Math.round(Math.min(60,22+Math.sqrt(v)*5)):24};
+const dmGl=(t,c)=>JUICE&&(Math.abs(parseInt(t))||0)>=20?`;text-shadow:0 0 14px ${c},0 0 4px #000`:'';
+const fxOk=()=>JUICE&&FX().children.length<140;
+function jsnd(seq){if(!JUICE||MUTE)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();seq.forEach(([f,d,ty,v,s,dl])=>{const t=AC.currentTime+(dl||0),o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);o.frequency.linearRampToValueAtTime(Math.max(30,f+s),t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d)})}catch(e){}}
+function fxBurst(x,y,c,n,sp,ms){if(!fxOk())return;for(let i=0;i<n;i++){const a=Math.random()*6.283,d=sp*(.4+Math.random()*.6),e=fxEl(`<div class="jp" style="left:${x}px;top:${y}px;--c:${c}"></div>`,ms+200);if(e&&e.animate)e.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*d}px),calc(-50% + ${Math.sin(a)*d+24}px)) scale(.2)`,opacity:0}],{duration:ms*(.7+Math.random()*.6),easing:'cubic-bezier(.1,.7,.3,1)',fill:'forwards'})}}
+function fxTxt(t,x,y,c,sz,ms){if(!fxOk())return;ms=ms||900;const e=fxEl(`<div class="jt" style="left:${x}px;top:${y}px;--c:${c};font-size:${sz}px">${t}</div>`,ms+100);if(e&&e.animate)e.animate([{transform:'translate(-50%,-50%) scale(.4)',opacity:0},{transform:'translate(-50%,-70%) scale(1.25)',opacity:1,offset:.2},{transform:'translate(-50%,-110%) scale(1)',opacity:1,offset:.7},{transform:'translate(-50%,-150%) scale(.95)',opacity:0}],{duration:ms,fill:'forwards'})}
+function fxRing(x,y,c,sc){if(!fxOk())return;const e=fxEl(`<div class="rx" style="left:${x}px;top:${y}px;--c:${c}"></div>`,700);if(e&&e.animate)e.animate([{transform:'translate(-50%,-50%) scale(.3)',opacity:1},{transform:`translate(-50%,-50%) scale(${sc||5})`,opacity:0}],{duration:600,easing:'ease-out',fill:'forwards'})}
+function jHit(el,f){if(!JUICE||!el||!el.isConnected)return;if(f.p){fxEl('<div class="vg"></div>',450);if(f.v>=8)shake();return}el.classList.remove('hf');void el.offsetWidth;el.classList.add('hf');setTimeout(()=>el.classList.remove('hf'),260);if(f.v>=15)shake();const r=el.getBoundingClientRect();fxBurst(r.left+r.width/2,r.top+r.height/2,f.c||'#fff',Math.min(14,4+Math.floor(f.v/3)),50+Math.min(60,f.v),500)}
+function fxKill(r){if(!r||!JUICE)return;const x=r.left+r.width/2,y=r.top+r.height/2;fxBurst(x,y,'#ffe066',16,90,650);fxBurst(x,y,'#fff',8,60,500);fxRing(x,y,'#ffe066',4);jsnd([[300,.12,'square',.06,-200,0],[520,.14,'triangle',.06,300,.06]])}
+const RXD={'蒸気':['蒸気反応！','#aee6ff'],'爆発':['毒爆発！','#ff8a3d'],'猛毒':['猛毒化！','#b46bff']};
+function fxReact(seg,r){if(!JUICE)return;if(!r)r={left:innerWidth/2-40,top:innerHeight*.3,width:80,height:60};const x=r.left+r.width/2,y=r.top+r.height/2;Object.keys(RXD).filter(k=>seg.includes(k)).forEach((k,i)=>{const[t,c]=RXD[k];setTimeout(()=>{fxTxt(t,x,y-10,c,34,1000);fxRing(x,y,c,6);fxBurst(x,y,c,22,110,700);fxEl(`<div class="fo" style="--c:${c}"></div>`,600);shake();jsnd([[880,.1,'triangle',.08,400,0],[1320,.18,'triangle',.08,0,.08]])},i*220)})}
+function fxCombo(n){if(!JUICE)return;const old=document.getElementById('cbx');if(old)old.remove();const sc=Math.min(1.7,1+n*.1),e=fxEl(`<div id="cbx" class="cbx" style="color:${n>=3?'#ffe066':'#fff'}"><b>${n}</b> COMBO${n===3?'　ドロー！':''}</div>`,1100);if(e&&e.animate)e.animate([{transform:`scale(${sc+.6})`,opacity:0},{transform:`scale(${sc})`,opacity:1,offset:.2},{transform:`scale(${sc})`,opacity:1,offset:.8},{transform:`scale(${sc*.9})`,opacity:0}],{duration:1000,fill:'forwards'});jsnd([[500+n*90,.09,'triangle',.06,250,0]])}
+function fxHeal(){const e=document.querySelector('.me');if(!e||!JUICE)return;const r=e.getBoundingClientRect();fxBurst(r.left+r.width/2,r.top+4,'#6bdc8b',12,70,800);fxTxt('♥',r.left+r.width/2,r.top,'#6bdc8b',30,800)}
+function fxBlock(){const e=document.querySelector('.me');if(!e||!JUICE)return;e.classList.add('bf');setTimeout(()=>e.classList.remove('bf'),520);const r=e.getBoundingClientRect();fxRing(r.left+r.width/2,r.top+r.height/2,'#5aa9ff',4);jsnd([[700,.1,'sine',.06,-200,0]])}
+function fxCoins(g){if(!JUICE||g<=0)return;const n=Math.min(40,6+Math.floor(g/3));for(let i=0;i<n;i++){const e=fxEl(`<div class="co" style="left:${R(innerWidth)}px;top:-20px"></div>`,2300);if(e&&e.animate)e.animate([{transform:'translateY(0) rotateY(0deg)',opacity:1},{transform:`translateY(${innerHeight*.9}px) rotateY(${720+R(360)}deg)`,opacity:.9}],{duration:1100+R(700),delay:R(500),easing:'cubic-bezier(.3,0,.8,.6)',fill:'both'})}fxTxt('お賽銭 +'+g,innerWidth/2,innerHeight*.3,'#ffd54a',34,1400);for(let i=0;i<4;i++)setTimeout(()=>jsnd([[1500+i*120,.09,'square',.035,300,0],[2000,.12,'square',.03,0,.07]]),i*110)}
+function fxWin(S){fxCoins(G.gold-S.gold);if(B.kind===3){fxRun('petals','#ffb7d5');fxTxt('撃破！',innerWidth/2,innerHeight*.4,'#ff7b8a',54,1500);shake()}}
+const rxCount=()=>(((B&&B.log)||'').match(/蒸気！|爆発！|猛毒！/g)||[]).length;
+function jSnap(i){try{const q=sl=>[...document.querySelectorAll(sl)],ce=i>=0?q('button.card[onclick^="play("]')[i]:null,me=document.querySelector('.me');return{hp:G.hp,gold:G.gold,blk:B.blk||0,es:B.es.slice(),alive:B.es.map(e=>e.hp>0),rects:q('.en').map(e=>e.getBoundingClientRect()),cr:ce?ce.getBoundingClientRect():null,mr:me?me.getBoundingClientRect():null,ti:B.es.indexOf(tgt()),log:(B.log||'').length,rx:rxCount()}}catch(e){return null}}
+function jAfter(S,o){const rx=rxCount()-S.rx,seg=(B.log||'').slice(S.log),aliveNow=B.es.some(e=>e.hp>0);let drew=0;
+if(G.ch==='pc'&&rx>0&&aliveNow&&!B.pk&&B.hh){let m='';if(B.rxd!==B.hh.length){B.rxd=B.hh.length;drawN(1);drew=1;m+=' 魔導書の閃き：1枚ドロー！'}const room=30-(B.rxg||0);if(room>0){const g=Math.min(room,5*rx);B.rxg=(B.rxg||0)+g;G.gold=Math.min(999,G.gold+g);m+=' お賽銭+'+g}if(m){B.log+=m;render()}}
+if(!JUICE)return;
+const tr0=S.rects[S.ti];
+if(S.cr&&o){const d=cs(o).d,att=d.dmg||d.psn||d.psa||d.fp||d.pc||d.rp||d.wk,tr=att?tr0:S.mr;if(tr){const e=fxEl(`<div class="cf" style="left:${S.cr.left}px;top:${S.cr.top}px;width:${S.cr.width}px;height:${S.cr.height}px;--c:#ffd166"></div>`,500);if(e&&e.animate)e.animate([{transform:'none',opacity:.9},{transform:`translate(${tr.left+tr.width/2-S.cr.left-S.cr.width/2}px,${tr.top+tr.height/2-S.cr.top-S.cr.height/2}px) scale(.25)`,opacity:0}],{duration:380,easing:'cubic-bezier(.4,0,.9,.6)',fill:'forwards'})}}
+if(rx>0){fxReact(seg,tr0);if(drew&&tr0)setTimeout(()=>fxTxt('ドロー！',tr0.left+tr0.width/2,tr0.top+tr0.height+8,'#ffe066',22,900),300)}
+S.es.forEach((e,i)=>{if(S.alive[i]&&e.hp<=0)fxKill(S.rects[i])});
+if(o&&(B.ca||0)>=2)fxCombo(B.ca);
+if(G.hp-S.hp>=3)fxHeal();
+if((B.blk||0)-S.blk>=6)fxBlock();
+if(!aliveNow&&!B.wfx){B.wfx=1;fxWin(S)}}
+const _playJ=play;play=function(i){const o=B&&B.hand?B.hand[i]:null;if(!o)return _playJ(i);const S=jSnap(i);_playJ(i);if(!S||B.hand[i]===o)return;try{jAfter(S,o)}catch(e){}};
+const _endJ=endTurn;endTurn=function(){const S=jSnap(-1);_endJ();if(!S)return;try{jAfter(S,null)}catch(e){}};
+let HS=new WeakSet();
+const _turnJ=turn;turn=function(f){HS=new WeakSet();_turnJ(f)};
+const _renderJ=render;render=function(){_renderJ();if(!JUICE)return;try{[...document.querySelectorAll('button.card[onclick^="play("]')].forEach((el,i)=>{const o=B.hand&&B.hand[i];if(o&&!HS.has(o)){HS.add(o);el.classList.add('cin');el.style.animationDelay=(i*35)+'ms'}})}catch(e){}};
+const _tJ=title;title=function(){_tJ();try{const b=document.querySelector('#app button[onclick^="cxOpen(\'m\')"]');if(b)b.parentElement.insertAdjacentHTML('beforeend',`<button onclick="juiceToggle(this)">演出：${JUICE?'ON':'OFF'}</button>`)}catch(e){}};
+// ---- スレスパ風マップ・イベント ----
+let PE=0;const MP_W=6,MPI={b:'戦',e:'強',c:'宝',r:'休',s:'店',v:'？'},MPC={b:'#e5636f',e:'#ffb347',c:'#ffd166',r:'#7be0a0',s:'#8ecae6',v:'#c9b6ff'};
+function mpGen(){const a=ACT[G.act],H=a.len,W=MP_W,rows=Array.from({length:H},()=>Array(W).fill(null)),E=Array.from({length:H},()=>new Set());
+const st=[];while(st.length<2){const c=R(W);if(!st.includes(c))st.push(c)}while(st.length<6)st.push(R(W));
+st.forEach(c0=>{let c=c0;if(!rows[0][c])rows[0][c]={t:'b',to:[]};for(let r=0;r<H-1;r++){const ok=[c-1,c,c+1].filter(x=>x>=0&&x<W&&(x===c||!E[r].has(x+'>'+c))),nx=pick(ok.length?ok:[c]);E[r].add(c+'>'+nx);if(!rows[r+1][nx])rows[r+1][nx]={t:'?',to:[]};const nd=rows[r][c];if(!nd.to.includes(nx))nd.to.push(nx);c=nx}});
+for(let r=0;r<H-1;r++)for(let c=0;c<W;c++){const nd=rows[r][c];if(!nd||nd.to.length>=2||Math.random()>.45)continue;const cand=[c-1,c,c+1].filter(x=>x>=0&&x<W&&rows[r+1][x]&&!nd.to.includes(x)&&(x===c||!E[r].has(x+'>'+c)));if(cand.length){const x=pick(cand);nd.to.push(x);E[r].add(c+'>'+x)}}
+const tr=Math.min(H-3,Math.max(2,Math.floor(H*.55))),lo=Math.max(2,Math.ceil(H*.25)),pe=PE||(H<=6?.9:H<=8?.8:H===9?.7:.62),WT=[['b',50],['v',26],['r',12],['s',12]];
+const roll=()=>{let x=R(100),acc=0;for(const[t,w]of WT){acc+=w;if(x<acc)return t}return'b'};
+const par=(r,c)=>[c-1,c,c+1].filter(p=>p>=0&&p<W&&rows[r-1][p]&&rows[r-1][p].to.includes(c));
+for(let r=1;r<H;r++)for(let c=0;c<W;c++){const nd=rows[r][c];if(!nd)continue;if(r===H-1)nd.t='r';else if(r===tr)nd.t='c';else{let t,n=0;if(r>=lo&&Math.random()<pe&&!par(r,c).some(p=>rows[r-1][p].t==='e'))t='e';else do{t=roll();n++}while(n<30&&((t==='r'&&(r<lo||r===H-2))||((t==='r'||t==='s')&&par(r,c).some(p=>rows[r-1][p].t===t))));nd.t=t}}
+if(G.act===0)for(let r=0;r<H-1;r++)for(let c=0;c<W;c++){const nd=rows[r][c];if(!nd||!nd.to.length)continue;if(nd.to.every(x=>rows[r+1][x]&&rows[r+1][x].t==='e'))rows[r+1][pick(nd.to)].t='b'}
+return rows}
+function mpAcc(){const M=G.mp,r=G.step;if(r>=M.rows.length)return[];const row=M.rows[r];if(r>0&&M.pos&&M.pos.r===r-1){const nd=M.rows[r-1][M.pos.c];if(nd)return nd.to.filter(c=>row[c])}return row.map((n,c)=>n?c:-1).filter(c=>c>=0)}
+function mpGo(c){if(!mpAcc().includes(c))return;const r=G.step,nd=G.mp.rows[r][c];G.mp.pos={r,c};(G.mp.path=G.mp.path||[]).push([r,c]);node(nd.t)}
+function mpView(){const a=ACT[G.act],M=G.mp,H=a.len,W=MP_W,dx=56,dy=54,px=28,pt=62,wd=(W-1)*dx+px*2,ht=(H-1)*dy+pt+34,X=c=>px+c*dx,Y=r=>pt+(H-1-r)*dy,acc=mpAcc(),path=M.path||[],on=(r,c)=>path.some(q=>q[0]===r&&q[1]===c);let sv='';
+M.rows.forEach((row,r)=>row.forEach((nd,c)=>{if(!nd||r>=H-1)return;nd.to.forEach(t=>{const tk=on(r,c)&&on(r+1,t),ac=M.pos&&M.pos.r===r&&M.pos.c===c&&r+1===G.step;sv+=`<line x1="${X(c)}" y1="${Y(r)}" x2="${X(t)}" y2="${Y(r+1)}" stroke="${tk?'#ffe066':ac?'#ffffffcc':'#ffffff33'}" stroke-width="${tk?3:ac?2.5:1.5}"/>`})}));
+M.rows[H-1].forEach((nd,c)=>{if(nd)sv+=`<line x1="${X(c)}" y1="${Y(H-1)}" x2="${wd/2}" y2="26" stroke="#ffffff33" stroke-width="1.5"/>`});
+M.rows.forEach((row,r)=>row.forEach((nd,c)=>{if(!nd)return;const isA=r===G.step&&acc.includes(c),op=on(r,c)?1:r<G.step?.3:isA?1:.8;sv+=`<g ${isA?`class="mpa" onclick="mpGo(${c})"`:''} opacity="${op}"><circle cx="${X(c)}" cy="${Y(r)}" r="22" fill="transparent"/><circle cx="${X(c)}" cy="${Y(r)}" r="15" fill="${MPC[nd.t]}" stroke="${on(r,c)?'#fff':isA?'#ffe066':'#00000066'}" stroke-width="${isA?4:on(r,c)?3:1.5}"/><text x="${X(c)}" y="${Y(r)+5}" text-anchor="middle" font-size="14" font-weight="700" fill="#111" style="pointer-events:none">${MPI[nd.t]}</text></g>`}));
+sv+=`<circle cx="${wd/2}" cy="26" r="21" fill="#8a1c2b" stroke="#ffd166" stroke-width="2"/><text x="${wd/2}" y="31" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">ボス</text>`;
+$v(head()+`<h2>${a.n}</h2><p class="log">${G.step===0?'最初の地点を選ぶ':acc.length===1?'道は1本しかない':'光っている地点から進む道を選ぶ'}</p><svg viewBox="0 0 ${wd} ${ht}" style="width:100%;max-width:420px;display:block;margin:0 auto">${sv}</svg><div class="log">戦=戦闘　強=エリート　宝=宝箱　休=休憩所　店=商店　？=イベント（戦闘・商店・宝箱のこともある）</div>`)}
+function evq(){const q=G.evq||(G.evq={m:.1,s:.03,c:.02}),x=Math.random();let res=null;
+if(x<q.m){res='b';q.m=.1}else if(x<q.m+q.s){res='s';q.s=.03}else if(x<q.m+q.s+q.c){res='c';q.c=.02}else{q.m+=.1;q.s+=.03;q.c+=.02}
+if(!res)return event();
+const m={b:['待ち伏せ！','道端の妖怪が襲いかかってきた！','迎え撃つ'],s:['行商人','怪しい行商人が店を広げている。','店を覗く'],c:['落とし物','道の脇に宝箱が落ちている。','開ける']}[res];
+$v(head()+`<h2>？　${m[0]}</h2><p>${m[1]}</p><button class="pri" onclick="evqGo('${res}')">${m[2]}</button>`)}
+function evqGo(r){if(r==='b')fight(pick(ACT[G.act].N),0);else if(r==='s')shop();else chest()}
+function pickEv(){const ids=[0,1,2,6,7,8];if(G.deck.some(c=>!c.up))ids.push(3);if(G.lives<4&&G.mhp>20)ids.push(4);if(G.gold>=40&&wpool().length)ids.push(5);return pick(ids)}
+function evFlee(){if(G.gold>=30)G.gold-=30;else G.hp=Math.max(1,G.hp-10);map()}
+function evNew(n){const h=head();if(n===7)$v(h+`<h2>妖怪の待ち伏せ</h2><p>道端から妖怪が飛び出してきた！</p><div class="ch"><button onclick="fight(pick(ACT[G.act].N),0)">戦う</button><button onclick="evFlee()">お賽銭30を渡して見逃してもらう（足りなければHP-10）</button></div>`);
+else $v(h+`<h2>肝試しの誘い</h2><p>魔理沙が肝試しに誘ってくる。奥には強い妖怪がいるらしい。</p><div class="ch"><button onclick="fight(pick(ACT[G.act].El),1)">挑む（エリート戦）</button><button onclick="map()">断る</button></div>`)}
+EV[7]=['#e5333f','rings','妖怪の待ち伏せ'];EV[8]=['#9b7ede','rain','肝試しの誘い'];
+const _evx3=evx;evx=function(n){if(n===7||n===8){evNew(n);const v=EV[n];fxRun(v[1],v[0]);fxBn(v[2],v[0]);return}_evx3(n)};
+title();
+</script></body></html>
